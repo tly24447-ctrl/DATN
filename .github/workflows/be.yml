@@ -1,0 +1,43 @@
+name: Be CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    paths:
+      - 'backEnd/**'  # Only trigger if changes are in the backEnd folder
+  pull_request:
+    branches: [ "main", "master" ]
+    paths:
+      - 'backEnd/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    # This sets the default directory for all 'run' steps
+    defaults:
+      run:
+        working-directory: backEnd
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+        cache: 'npm'
+        # Important: Tell the cache to look for package-lock.json inside backEnd
+        cache-dependency-path: backEnd/package-lock.json
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build Project
+      run: npm run build
+    #   env:
+    #     MONGO_DB: "mongodb://localhost:27017/test"
+    #     JWT_SECRET: "build_test_secret"
+
+    - name: Run Tests
+      run: npm test

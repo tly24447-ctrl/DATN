@@ -1,0 +1,44 @@
+name: React Frontend CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    paths:
+      - 'frontEnd/**'
+  pull_request:
+    branches: [ "main", "master" ]
+    paths:
+      - 'frontEnd/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontEnd
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+        cache: 'npm'
+        cache-dependency-path: frontEnd/package-lock.json
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Run Tests
+      # CI=true is required for react-scripts test to run once and exit
+      run: npm test -- --watchAll=false
+      env:
+        CI: true
+
+    - name: Build Production Bundle
+      run: npm run build
+    #   env:
+    #     # If your frontend uses env variables (like API URLs), add them here
+    #     REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}

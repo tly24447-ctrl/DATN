@@ -1,0 +1,72 @@
+erDiagram
+    USER ||--o{ ORDER : "places"
+    PRODUCT ||--o{ ORDER_ITEM : "included in"
+    ORDER ||--|{ ORDER_ITEM : "contains"
+    VOUCHER ||--o{ ORDER : "applied to"
+
+    USER {
+        ObjectId id PK
+        string name
+        string email "Unique"
+        string password
+        boolean isAdmin
+        number phone
+        string address
+        string avatar
+        string city
+        date createdAt
+    }
+
+    PRODUCT {
+        ObjectId id PK
+        string name
+        string image
+        string type
+        number price
+        number countInStock
+        number rating
+        string description
+        number discount
+        number selled
+        date createdAt
+    }
+
+    ORDER {
+        ObjectId id PK
+        ObjectId user FK "Ref: User"
+        ObjectId voucher FK "Ref: Voucher"
+        string paymentMethod
+        number itemsPrice
+        number shippingPrice
+        number totalPrice
+        boolean isPaid
+        date paidAt
+        boolean isDelivered
+        date deliveredAt
+        string fullName_shipping
+        string address_shipping
+        string city_shipping
+        number phone_shipping
+    }
+
+    ORDER_ITEM {
+        ObjectId product FK "Ref: Product"
+        string name
+        number amount
+        string image
+        number price
+        number discount
+    }
+
+    VOUCHER {
+        ObjectId id PK
+        string code
+        string discountType
+        number discountValue
+        number minOrderValue
+        number maxUses
+        number usedCount
+        date startDate
+        date expirationDate
+        boolean isActive
+    }

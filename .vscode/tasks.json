@@ -46,6 +46,21 @@
         "fe"
       ],
       "dependsOrder": "parallel"
+    },
+    {
+      "label": "Configure Git Global",
+      "type": "shell",
+      "command": "git config --global user.name 'NNN'; git config --global user.email ' tly24447@gmail.com'",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "group": "setup"
     }
   ]
 }
