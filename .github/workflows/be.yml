@@ -5,10 +5,12 @@ on:
     branches: [ "main", "master" ]
     paths:
       - 'backEnd/**'  # Only trigger if changes are in the backEnd folder
+      - '.github/workflows/be.yml'  # Also trigger if the workflow file itself is changed
   pull_request:
     branches: [ "main", "master" ]
     paths:
       - 'backEnd/**'
+      - '.github/workflows/be.yml'  # Also trigger if the workflow file itself is changed
 
 jobs:
   build-and-test:

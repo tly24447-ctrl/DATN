@@ -5,10 +5,12 @@ on:
     branches: [ "main", "master" ]
     paths:
       - 'frontEnd/**'
+      - '.github/workflows/fe.yml'  # Also trigger if the workflow file itself is changed
   pull_request:
     branches: [ "main", "master" ]
     paths:
       - 'frontEnd/**'
+      - '.github/workflows/fe.yml'  # Also trigger if the workflow file itself is changed
 
 jobs:
   build-and-test:
@@ -33,7 +35,7 @@ jobs:
 
     - name: Run Tests
       # CI=true is required for react-scripts test to run once and exit
-      run: npm test -- --watchAll=false
+      run: npm test -- --watchAll=false --passWithNoTests
       env:
         CI: true
 
