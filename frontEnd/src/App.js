@@ -1,13 +1,13 @@
-import React, { Fragment, useEffect, useState } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import DefaultComponent from './components/DefaultComponent/DefaultComponent'
-import { routes } from './routes'
-import { isJsonString } from './utils'
 import jwt_decode from "jwt-decode";
-import * as UserService from './services/UserService'
-import { useDispatch, useSelector } from 'react-redux'
-import { resetUser, updateUser } from './redux/slides/userSlide'
-import Loading from './components/LoadingComponent/Loading'
+import { Fragment, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import DefaultComponent from './presentation/components/DefaultComponent/DefaultComponent';
+import * as UserService from './data/api/UserService';
+import Loading from './presentation/components/LoadingComponent/Loading';
+import { routes } from './presentation/routes';
+import { resetUser, updateUser } from './presentation/state/slices/userSlide';
+import { isJsonString } from './shared/utils/utils';
 
 function App() {
   const dispatch = useDispatch();
@@ -21,6 +21,7 @@ function App() {
       handleGetDetailsUser(decoded?.id, storageData)
     }
     setIsLoading(false)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleDecoded = () => {
