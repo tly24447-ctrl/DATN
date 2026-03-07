@@ -3,6 +3,7 @@ erDiagram
     PRODUCT ||--o{ ORDER_ITEM : "included in"
     ORDER ||--|{ ORDER_ITEM : "contains"
     VOUCHER ||--o{ ORDER : "applied to"
+    CATEGORY ||--o{ PRODUCT : "classifies"
 
     USER {
         ObjectId id PK
@@ -17,11 +18,26 @@ erDiagram
         date createdAt
     }
 
+    CATEGORY {
+        ObjectId id PK
+        string name "Unique"
+        string description
+        string image
+        date createdAt
+    }
+
     PRODUCT {
         ObjectId id PK
-        string name
+        ObjectId category FK "Ref: Category"
+        string name "Unique"
         string image
-        string type
+        string author "Required"
+        string publisher
+        date publicationDate
+        string isbn "Unique/Sparse"
+        number pageCount
+        string language
+        string format "Enum"
         number price
         number countInStock
         number rating
@@ -43,10 +59,6 @@ erDiagram
         date paidAt
         boolean isDelivered
         date deliveredAt
-        string fullName_shipping
-        string address_shipping
-        string city_shipping
-        number phone_shipping
     }
 
     ORDER_ITEM {
@@ -60,7 +72,7 @@ erDiagram
 
     VOUCHER {
         ObjectId id PK
-        string code
+        string code "Unique"
         string discountType
         number discountValue
         number minOrderValue
