@@ -1,9 +1,8 @@
+import { FirebaseProvider } from "@/src/presentation/context/FirebaseContext";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 import React from "react";
-import { FirebaseProvider } from "@/src/presentation/context/FirebaseContext";
-import { Navbar } from "@/src/presentation/components/layout/Navbar";
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +31,6 @@ export default function RootLayout({
       >
         <React.StrictMode>
           <FirebaseProvider>
-            <Navbar />
             {children}
           </FirebaseProvider>
         </React.StrictMode>
