@@ -4,7 +4,7 @@
     {
       "label": "fe",
       "type": "shell",
-      "command": "npm start",
+      "command": "npm run dev",
       "options": {
         "cwd": "${workspaceFolder}/frontEnd"
       },
@@ -23,7 +23,7 @@
     {
       "label": "be",
       "type": "shell",
-      "command": "npm start",
+      "command": "nest start --watch",
       "options": {
         "cwd": "${workspaceFolder}/backEnd"
       },
