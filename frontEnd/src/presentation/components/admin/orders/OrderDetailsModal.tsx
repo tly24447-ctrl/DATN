@@ -30,7 +30,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
         <div className="flex justify-between items-center px-6 py-4 border-b border-slate-100 bg-slate-50/50">
           <div>
             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-              Order Details <span className="text-slate-400 text-sm font-normal">#{order.id?.toUpperCase()}</span>
+              Order Details <span className="text-slate-400 text-sm font-normal">#{order._id?.toUpperCase()}</span>
             </h2>
             <p className="text-xs text-slate-500">Placed on {order.createdAt ? new Date(order.createdAt).toLocaleString() : 'Unknown date'}</p>
           </div>
@@ -64,7 +64,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
               ) : (
                 <div className="flex flex-col gap-2">
                   <span className="text-xs font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full w-fit">Pending</span>
-                  <button onClick={() => onMarkAsPaid?.(order.id!)} className="text-[10px] text-blue-600 hover:underline text-left">Mark as Paid</button>
+                  <button onClick={() => onMarkAsPaid?.(order._id!)} className="text-[10px] text-blue-600 hover:underline text-left">Mark as Paid</button>
                 </div>
               )}
             </div>
@@ -81,7 +81,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
               ) : (
                 <div className="flex flex-col gap-2">
                   <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full w-fit">In Progress</span>
-                  <button onClick={() => onMarkAsDelivered?.(order.id!)} className="text-[10px] text-blue-600 hover:underline text-left">Mark as Delivered</button>
+                  <button onClick={() => onMarkAsDelivered?.(order._id!)} className="text-[10px] text-blue-600 hover:underline text-left">Mark as Delivered</button>
                 </div>
               )}
             </div>

@@ -14,16 +14,16 @@ interface ProductModalProps {
   categories: CategoryEntity[]; // Needed for the Category dropdown
 }
 
-const ProductModal: React.FC<ProductModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  onSave, 
-  initialData, 
-  categories 
+const ProductModal: React.FC<ProductModalProps> = ({
+  isOpen,
+  onClose,
+  onSave,
+  initialData,
+  categories
 }) => {
   const [formData, setFormData] = useState<Partial<ProductEntity>>({
     name: '',
-    categoryId: '',
+    categoryId: categories[0]?._id,
     author: '',
     publisher: '',
     price: 0,
@@ -42,12 +42,19 @@ const ProductModal: React.FC<ProductModalProps> = ({
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData(initialData);
     } else {
-      setFormData({ 
-        name: '', categoryId: categories[0]?.id || '', author: '', 
-        price: 0, countInStock: 0, format: 'Paperback', image: '' 
+      setFormData({
+        name: '', categoryId: categories[0]?._id || '', author: '',
+        price: 0, countInStock: 0, format: 'Paperback', image: ''
       });
     }
   }, [initialData, isOpen, categories]);
+
+  useEffect(() => {
+  if (categories.length > 0 && !formData.categoryId) {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFormData(prev => ({ ...prev, categoryId: categories[0]._id }));
+  }
+}, [categories, formData.categoryId]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -62,7 +69,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     onSave(formData as ProductEntity);
   };
@@ -70,7 +77,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 text-slate-900">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200">
-        
+
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-slate-100">
           <div className="flex items-center gap-2">
@@ -87,7 +94,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
         {/* Scrollable Form Body */}
         <form onSubmit={handleSubmit} className="overflow-y-auto p-6 flex-1">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
+
             {/* Left Column: Image Upload */}
             <div className="md:col-span-1 space-y-4">
               <label className="text-sm font-semibold text-slate-700 block">Book Cover</label>
@@ -98,8 +105,8 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   <ImageIcon size={48} />
                 )}
                 <label className="absolute inset-0 cursor-pointer flex items-center justify-center bg-black/0 hover:bg-black/20 transition-all group">
-                   <Upload className="text-white opacity-0 group-hover:opacity-100" size={32} />
-                   <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+                  <Upload className="text-white opacity-0 group-hover:opacity-100" size={32} />
+                  <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
                 </label>
               </div>
               <p className="text-[10px] text-center text-slate-400">Recommended ratio: 3:4 (Portrait)</p>
@@ -117,8 +124,9 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 <label className="text-sm font-semibold text-slate-700">Category</label>
                 <select required className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
                   value={formData.categoryId} onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}>
+                  <option value="" disabled>Select a category</option>
                   {categories.map(cat => (
-                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    <option key={cat._id} value={cat._id}>{cat.name}</option>
                   ))}
                 </select>
               </div>

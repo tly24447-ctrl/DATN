@@ -1,7 +1,8 @@
 export class CategoryEntity {
-  id?: string;
+  private id?: string;
   name!: string;
   description?: string;
   image?: string;
   createdAt?: Date;
+  _id?: string; // For compatibility with MongoDB documents
 }

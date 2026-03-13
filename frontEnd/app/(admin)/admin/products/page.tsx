@@ -62,9 +62,9 @@ const Page = () => {
   const handleSave = async (data: ProductEntity) => {
     try {
       if (selectedProduct) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const id = selectedProduct.id || (selectedProduct as any)._id;
-        await AppProviders.UpdateProductUseCase.execute(id, data);
+        const id = selectedProduct._id;
+        console.log("Updating product with ID:", id, "Data:", data);
+        await AppProviders.UpdateProductUseCase.execute(id!, data);
       } else {
         await AppProviders.CreateProductUseCase.execute(data);
       }
@@ -92,8 +92,7 @@ const Page = () => {
     <div className="p-8 bg-slate-50 min-h-screen">
       {/* Product Modal */}
       <ProductModal 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        key={selectedProduct?.id || (selectedProduct as any)?._id || 'new-prod'}
+        key={selectedProduct?._id}
         isOpen={isModalOpen}
         initialData={selectedProduct}
         categories={categories}

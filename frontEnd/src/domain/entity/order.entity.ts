@@ -10,7 +10,7 @@ export class OrderItem {
 }
 
 export class OrderEntity {
-  id?: string;
+  private id?: string;
   userId!: string;
   voucherId?: string;
   orderItems!: OrderItem[];
@@ -24,4 +24,5 @@ export class OrderEntity {
   isDelivered!: boolean;
   deliveredAt?: Date;
   createdAt?: Date;
+  _id?: string; // For compatibility with MongoDB documents
 }

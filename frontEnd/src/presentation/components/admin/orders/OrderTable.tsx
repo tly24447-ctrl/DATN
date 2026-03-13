@@ -27,10 +27,10 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, onViewDetails }) => {
         </thead>
         <tbody className="divide-y divide-slate-200 bg-white">
           {orders.map((order) => (
-            <tr key={order.id} className="hover:bg-slate-50 transition-colors text-slate-900">
+            <tr key={order._id} className="hover:bg-slate-50 transition-colors text-slate-900">
               {/* Order ID & Date */}
               <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm font-bold text-slate-900">#{order.id?.substring(order.id.length - 8).toUpperCase()}</div>
+                <div className="text-sm font-bold text-slate-900">#{order._id?.substring(order._id.length - 8).toUpperCase()}</div>
                 <div className="text-[10px] text-slate-400 flex items-center gap-1 mt-1 uppercase font-medium">
                   <Calendar size={12} />
                   {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}

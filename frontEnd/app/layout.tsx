@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import React from "react";
 import "./globals.css";
+import { CartProvider } from "@/src/presentation/context/CartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +32,9 @@ export default function RootLayout({
       >
         <React.StrictMode>
           <FirebaseProvider>
-            {children}
+            <CartProvider>
+              {children}
+            </CartProvider>
           </FirebaseProvider>
         </React.StrictMode>
       </body>

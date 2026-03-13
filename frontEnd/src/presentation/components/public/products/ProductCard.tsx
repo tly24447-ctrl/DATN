@@ -5,6 +5,7 @@ import { ProductEntity } from '@/src/domain/entity/product.entity';
 import { ShoppingCart, Star, Heart, Bookmark } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCart } from '@/src/presentation/context/CartContext';
 
 interface ProductCardProps {
   product: ProductEntity;
@@ -12,6 +13,7 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
+  const { addToCart } = useCart();
   // Calculate discounted price
   const hasDiscount = product.discount && product.discount > 0;
   const discountedPrice = hasDiscount 
@@ -40,8 +42,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         <Heart size={18} />
       </button>
 
-      {/* Image Container */}
-      <Link href={`/products/${product.id}`} className="block aspect-[3/4] relative overflow-hidden bg-slate-100">
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <Link href={`/products/${(product as any)._id}`} className="block aspect-[3/4] relative overflow-hidden bg-slate-100">
         {product.image ? (
           <Image
             src={product.image}
@@ -100,6 +102,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
             disabled={product.countInStock === 0}
             onClick={(e) => {
               e.preventDefault();
+              addToCart(product, 1);
               onAddToCart?.(product);
             }}
             className="p-2.5 bg-slate-900 text-white rounded-xl hover:bg-blue-600 disabled:bg-slate-200 disabled:cursor-not-allowed transition-colors shadow-sm active:scale-90"

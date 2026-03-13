@@ -25,7 +25,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({ categories, onEdit, onDel
         </thead>
         <tbody className="divide-y divide-slate-200 bg-white">
           {categories.map((category) => (
-            <tr key={category.id} className="hover:bg-slate-50 transition-colors">
+            <tr key={category._id} className="hover:bg-slate-50 transition-colors">
               {/* Image & Name */}
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
@@ -46,7 +46,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({ categories, onEdit, onDel
                   </div>
                   <div className="ml-4">
                     <div className="text-sm font-bold text-slate-900">{category.name}</div>
-                    <div className="text-xs text-slate-400">ID: {category.id?.substring(0, 8)}...</div>
+                    <div className="text-xs text-slate-400">ID: {category._id?.substring(0, 8)}...</div>
                   </div>
                 </div>
               </td>
@@ -73,7 +73,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({ categories, onEdit, onDel
                   <Edit size={18} />
                 </button>
                 <button
-                  onClick={() => onDelete(category.id!)}
+                  onClick={() => onDelete(category._id!)}
                   className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded-lg transition-colors"
                   title="Delete Category"
                 >

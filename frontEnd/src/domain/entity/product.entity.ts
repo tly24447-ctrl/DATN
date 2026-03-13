@@ -1,5 +1,5 @@
 export class ProductEntity {
-  id?: string;
+  private id?: string;
   categoryId!: string;
   name!: string;
   image?: string;
@@ -17,4 +17,5 @@ export class ProductEntity {
   discount?: number;
   selled?: number;
   createdAt?: Date;
+  _id?: string; // For compatibility with MongoDB documents
 }

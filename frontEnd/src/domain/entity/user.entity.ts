@@ -1,5 +1,5 @@
 export class UserEntity {
-  id?: string;
+  private id?: string;
   name!: string;
   email!: string;
   password!: string;

@@ -74,7 +74,7 @@ const Page = () => {
 
   return (
     <div className="p-8 bg-slate-50 min-h-screen">
-      <UserModal key={selectedUser?.id || 'new'} isOpen={isModalOpen} initialData={selectedUser} onClose={function (): void {
+      <UserModal key={selectedUser?._id || 'new'} isOpen={isModalOpen} initialData={selectedUser} onClose={function (): void {
         setIsModalOpen(false);
       }} onSave={function (user: UserEntity): void {
         handleSave(user);

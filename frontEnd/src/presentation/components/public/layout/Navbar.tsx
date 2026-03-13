@@ -1,19 +1,15 @@
 'use client';
-import { AuthService } from '@/src/presentation/services/auth.service';
-import { BookOpen, LogOut, Menu, Search, ShoppingCart, X } from 'lucide-react';
+import { BookOpen, Menu, Search, X } from 'lucide-react';
 import { useRouter } from 'next/dist/client/components/navigation';
 import { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
+import CartIcon from './CartIcon';
+import UserMenu from './UserMenu';
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { currUser } = useAuth();
   const router = useRouter();
-
-  const handleLogout = async () => {
-    await AuthService.logout();
-    window.location.reload(); // Refresh to clear state
-  };
 
   return (
     <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
@@ -42,29 +38,11 @@ export const Navbar = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-5">
-            <div className="relative cursor-pointer hover:text-indigo-600 transition-colors">
-              <ShoppingCart className="h-6 w-6 text-gray-600 hover:text-indigo-600" />
-              <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
-                3
-              </span>
-            </div>
+            <CartIcon />
 
             {currUser ? (
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 group cursor-pointer">
-                  <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-sm">
-                    {currUser?.name?.charAt(0) || 'U'}
-                  </div>
-                  <span className="text-sm font-medium text-gray-700 group-hover:text-indigo-600">
-                    {currUser?.name?.split(' ')[0]}
-                  </span>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                >
-                  <LogOut className="h-5 w-5" />
-                </button>
+                <UserMenu />
               </div>
             ) : (
               <button className="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-all shadow-sm"
@@ -98,15 +76,6 @@ export const Navbar = () => {
             <a href="#" className="hover:text-indigo-600">Best Sellers</a>
           </div>
           <hr />
-          {currUser ? (
-            <button onClick={handleLogout} className="w-full text-left text-red-500 font-medium">
-              Logout
-            </button>
-          ) : (
-            <button className="w-full bg-indigo-600 text-white py-2 rounded-lg font-bold">
-              Sign In
-            </button>
-          )}
         </div>
       )}
     </nav>

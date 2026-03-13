@@ -47,8 +47,7 @@ const Page = () => {
     try {
       if (selectedCategory) {
         // Use .id or ._id depending on your entity structure
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const id = selectedCategory.id || (selectedCategory as any)._id;
+        const id = selectedCategory?._id || '';
         await AppProviders.UpdateCategoryUseCase.execute(id, data);
       } else {
         await AppProviders.CreateCategoryUseCase.execute(data);
@@ -77,8 +76,7 @@ const Page = () => {
     <div className="p-8 bg-slate-50 min-h-screen">
       {/* Modal - Key ensures state resets every time selectedCategory changes */}
       <CategoryModal 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        key={selectedCategory?.id || (selectedCategory as any)?._id || 'new-cat'}
+        key={selectedCategory?._id}
         isOpen={isModalOpen} 
         initialData={selectedCategory} 
         onClose={() => setIsModalOpen(false)} 

@@ -25,7 +25,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
         </thead>
         <tbody className="divide-y divide-slate-200 bg-white">
           {users.map((user) => (
-            <tr key={user.id} className="hover:bg-slate-50 transition-colors">
+            <tr key={user._id} className="hover:bg-slate-50 transition-colors">
               {/* Profile & Name */}
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
@@ -82,7 +82,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
                   <Edit size={18} />
                 </button>
                 <button 
-                  onClick={() => onDelete(user.id!)}
+                  onClick={() => onDelete(user._id!)}
                   className="text-red-600 hover:text-red-900 transition-colors"
                 >
                   <Trash2 size={18} />

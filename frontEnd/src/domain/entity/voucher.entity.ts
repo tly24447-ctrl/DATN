@@ -1,5 +1,5 @@
 export class VoucherEntity {
-  id?: string;
+  private id?: string;
   code!: string;
   discountType!: 'percentage' | 'fixed';
   discountValue!: number;
@@ -9,4 +9,5 @@ export class VoucherEntity {
   startDate!: Date;
   expirationDate!: Date;
   isActive?: boolean;
+  _id?: string; // For compatibility with MongoDB documents
 }

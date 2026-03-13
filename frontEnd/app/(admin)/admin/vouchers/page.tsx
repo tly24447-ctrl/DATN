@@ -47,8 +47,7 @@ const VoucherPage = () => {
   const handleSave = async (data: VoucherEntity) => {
     try {
       if (selectedVoucher) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const id = selectedVoucher.id || (selectedVoucher as any)._id;
+        const id = selectedVoucher._id || '';
         await AppProviders.UpdateVoucherUseCase.execute(id, data);
       } else {
         await AppProviders.CreateVoucherUseCase.execute(data);
@@ -77,8 +76,7 @@ const VoucherPage = () => {
     <div className="p-8 bg-slate-50 min-h-screen">
       {/* Voucher Modal */}
       <VoucherModal
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        key={selectedVoucher?.id || (selectedVoucher as any)?._id || 'new-voucher'}
+        key={selectedVoucher?._id}
         isOpen={isModalOpen}
         initialData={selectedVoucher}
         onClose={() => setIsModalOpen(false)}

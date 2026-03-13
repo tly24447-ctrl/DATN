@@ -1,9 +1,11 @@
 'use client';
 
 import { ArrowRight, BookOpen, ShoppingCart, Sparkles } from 'lucide-react';
+import { useRouter } from 'next/dist/client/components/navigation';
 import Image from 'next/image';
 
 const HomeBanner = () => {
+  const router = useRouter();
   return (
     <section className="relative w-full bg-slate-50 overflow-hidden">
       {/* Decorative Background Elements */}
@@ -30,7 +32,8 @@ const HomeBanner = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="flex items-center justify-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-lg hover:shadow-slate-200 active:scale-95">
+              <button className="flex items-center justify-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-lg hover:shadow-slate-200 active:scale-95"
+              onClick={() => router.push('/shop')}>
                 <ShoppingCart size={20} />
                 Shop Now
               </button>

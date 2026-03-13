@@ -32,7 +32,7 @@ const VoucherTable: React.FC<VoucherTableProps> = ({ vouchers, onEdit, onDelete 
             const usagePercent = Math.min(((voucher.usedCount || 0) / voucher.maxUses) * 100, 100);
 
             return (
-              <tr key={voucher.id} className="hover:bg-slate-50 transition-colors">
+              <tr key={voucher._id} className="hover:bg-slate-50 transition-colors">
                 {/* Code */}
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center gap-3">
@@ -107,7 +107,7 @@ const VoucherTable: React.FC<VoucherTableProps> = ({ vouchers, onEdit, onDelete 
                     <Edit size={18} />
                   </button>
                   <button
-                    onClick={() => onDelete(voucher.id!)}
+                    onClick={() => onDelete(voucher._id!)}
                     className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded-lg transition-colors"
                   >
                     <Trash2 size={18} />

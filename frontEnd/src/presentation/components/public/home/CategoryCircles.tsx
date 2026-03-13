@@ -28,10 +28,10 @@ const CategoryCircles: React.FC<CategoryCircleProps> = ({ categories }) => {
 
         {/* Scrollable Container (for mobile) */}
         <div className="flex gap-8 overflow-x-auto pb-4 no-scrollbar sm:grid sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 sm:overflow-visible">
-          {categories.map((category) => (
+          {categories.map((category, index) => (
             <Link 
-              key={category.id} 
-              href={`/categories/${category.id}`} 
+              key={category._id || index}
+              href={`/categories/${category._id}`} 
               className="group flex flex-col items-center gap-4 min-w-[100px]"
             >
               {/* Circle Image Wrapper */}

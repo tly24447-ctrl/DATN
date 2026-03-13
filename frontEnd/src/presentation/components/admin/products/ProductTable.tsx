@@ -27,7 +27,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products, onEdit, onDelete 
         </thead>
         <tbody className="divide-y divide-slate-200 bg-white">
           {products.map((product) => (
-            <tr key={product.id} className="hover:bg-slate-50 transition-colors">
+            <tr key={product._id} className="hover:bg-slate-50 transition-colors">
               {/* Image & Name */}
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
@@ -104,7 +104,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products, onEdit, onDelete 
                   <Edit size={18} />
                 </button>
                 <button
-                  onClick={() => onDelete(product.id!)}
+                  onClick={() => onDelete(product._id!)}
                   className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded-lg transition-colors"
                 >
                   <Trash2 size={18} />
