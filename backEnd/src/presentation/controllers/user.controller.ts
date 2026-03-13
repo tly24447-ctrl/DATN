@@ -1,13 +1,17 @@
 // src/presentation/controllers/user.controller.ts
+import { PaginatedResult } from '@/src/domain/entity/paginated.result';
 import { UserEntity } from '@/src/domain/entity/user.entity';
 import {
   CreateUserUseCase,
   DeleteUserUseCase,
   GetAllUsersUseCase,
   GetUserByEmailUseCase,
+  GetUsersByPageUseCase,
   GetUserUseCase,
+  SearchUsersUseCase,
   UpdateUserUseCase,
 } from '@/src/domain/use-case/user.use-case'; // Adjust path if they are in one file
+import { Constants } from '@/src/shared/constans';
 import {
   Body,
   Controller,
@@ -16,6 +20,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 
 @Controller('users')
@@ -27,6 +32,8 @@ export class UserController {
     private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
     private readonly updateUserUseCase: UpdateUserUseCase,
     private readonly deleteUserUseCase: DeleteUserUseCase,
+    private readonly getUsersByPageUseCase: GetUsersByPageUseCase,
+    private readonly searchUsersUseCase: SearchUsersUseCase,
   ) {}
 
   @Post()
@@ -37,6 +44,31 @@ export class UserController {
   @Get()
   async findAll(): Promise<UserEntity[]> {
     return await this.getAllUsersUseCase.execute();
+  }
+
+  @Get('paginate')
+  async findByPage(
+    @Query('page') page: string = Constants.PAGE.toString(),
+    @Query('limit') limit: string = Constants.LIMIT.toString(),
+  ): Promise<PaginatedResult<UserEntity>> {
+    // Queries come in as strings from the URL, so we convert them to numbers
+    return await this.getUsersByPageUseCase.execute(
+      Number(page),
+      Number(limit),
+    );
+  }
+
+  @Get('search')
+  async search(
+    @Query('q') query: string, // The search term
+    @Query('page') page: string = Constants.PAGE.toString(),
+    @Query('limit') limit: string = Constants.LIMIT.toString(),
+  ): Promise<PaginatedResult<UserEntity>> {
+    return await this.searchUsersUseCase.execute(
+      query,
+      Number(page),
+      Number(limit),
+    );
   }
 
   @Get(':id')

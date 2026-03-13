@@ -1,11 +1,11 @@
-import { OrderItem } from '@/src/domain/entity/order.entity';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { OrderItem, OrderEntity } from '@/src/domain/entity/order.entity';
 
-@Schema()
-class OrderItemSchema {
+@Schema({ _id: false })
+class OrderItemDocument implements OrderItem {
   @Prop({ type: Types.ObjectId, ref: 'ProductDocument', required: true })
-  product!: Types.ObjectId;
+  productId!: string;
 
   @Prop({ required: true })
   name!: string;
@@ -24,14 +24,17 @@ class OrderItemSchema {
 }
 
 @Schema({ timestamps: true })
-export class OrderDocument extends Document {
-  @Prop({ type: String, ref: 'UserDocument', required: true }) // Matches Firebase UID String
-  user!: string;
+export class OrderDocument extends Document implements Omit<OrderEntity, 'id'> {
+  @Prop({ type: String, ref: 'UserDocument', required: true })
+  userId!: string;
 
   @Prop({ type: Types.ObjectId, ref: 'VoucherDocument' })
-  voucher?: Types.ObjectId;
+  voucherId?: string;
 
-  @Prop({ type: [OrderItemSchema], required: true })
+  @Prop({
+    type: [SchemaFactory.createForClass(OrderItemDocument)],
+    required: true,
+  })
   orderItems!: OrderItem[];
 
   @Prop({ required: true })
@@ -45,6 +48,10 @@ export class OrderDocument extends Document {
 
   @Prop({ required: true, default: 0 })
   totalPrice!: number;
+
+  // Added isCart field to match the updated OrderEntity
+  @Prop({ required: true, default: true })
+  isCart!: boolean;
 
   @Prop({ default: false })
   isPaid!: boolean;

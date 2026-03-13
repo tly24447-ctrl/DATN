@@ -7,21 +7,21 @@ import Image from "next/image";
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
-export default function AuthPage() {
+export default function Page() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { currUser } = useAuth();
 
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !currUser) {
       router.push('/auth');
     }
-  }, [user, loading, router]);
+  }, [currUser, loading, router]);
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();

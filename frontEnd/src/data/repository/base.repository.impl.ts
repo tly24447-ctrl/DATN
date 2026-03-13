@@ -1,8 +1,8 @@
-// src/infrastructure/repository/base.repository.impl.ts
 import axios, { AxiosInstance } from 'axios';
 import { BaseRepository } from '@/src/domain/repository/base.repository';
+import { PaginatedResult } from '@/src/domain/entity/paginated.result';
 
-export class BaseRepositoryImpl<T> implements BaseRepository<T> {
+export abstract class BaseRepositoryImpl<T> implements BaseRepository<T> {
   protected readonly api: AxiosInstance;
   protected readonly endpoint: string;
 
@@ -14,6 +14,34 @@ export class BaseRepositoryImpl<T> implements BaseRepository<T> {
         'Content-Type': 'application/json',
       },
     });
+  }
+  async search(
+    query: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<PaginatedResult<T>> {
+    const response = await this.api.get<PaginatedResult<T>>(
+      `/${this.endpoint}/search`,
+      {
+        params: {
+          q: query, // This matches the @Query('q') in your NestJS controller
+          page,
+          limit,
+        },
+      },
+    );
+
+    return response.data;
+  }
+  async findByPage(page: number = 1, limit: number = 10): Promise<PaginatedResult<T>> {
+    const response = await this.api.get<PaginatedResult<T>>(`/${this.endpoint}/paginate`, {
+      params: {
+        page,
+        limit,
+      },
+    });
+
+    return response.data;
   }
 
   async create(item: T): Promise<T> {

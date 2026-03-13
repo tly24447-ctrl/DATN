@@ -1,13 +1,21 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { VoucherEntity } from '@/src/domain/entity/voucher.entity';
 
 @Schema({ timestamps: true })
-export class VoucherDocument extends Document {
+export class VoucherDocument
+  extends Document
+  implements Omit<VoucherEntity, 'id'>
+{
   @Prop({ required: true, unique: true })
   code!: string;
 
-  @Prop({ required: true, enum: ['percentage', 'fixed'] })
-  discountType!: string;
+  @Prop({
+    required: true,
+    type: String,
+    enum: ['percentage', 'fixed'],
+  })
+  discountType!: 'percentage' | 'fixed'; // Match the literal type from Entity
 
   @Prop({ required: true })
   discountValue!: number;

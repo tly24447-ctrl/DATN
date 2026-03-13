@@ -3,7 +3,9 @@ import {
   DeleteUserUseCase,
   GetAllUsersUseCase,
   GetUserByEmailUseCase,
+  GetUsersByPageUseCase,
   GetUserUseCase,
+  SearchUsersUseCase,
   UpdateUserUseCase,
 } from '@/src/domain/use-case/user.use-case';
 import { UserController } from '@/src/presentation/controllers/user.controller';
@@ -19,6 +21,8 @@ import { Module } from '@nestjs/common';
     GetUserByEmailUseCase,
     UpdateUserUseCase,
     DeleteUserUseCase,
+    GetUsersByPageUseCase,
+    SearchUsersUseCase,
   ],
 })
 export class UserModule {}

@@ -1,5 +1,7 @@
+import { PaginatedResult } from '@/src/domain/entity/paginated.result';
 import { UserEntity } from '@/src/domain/entity/user.entity';
 import { UserRepository } from '@/src/domain/repository/user.repository';
+import { Constants } from '@/src/shared/constans';
 
 
 export class CreateUserUseCase {
@@ -66,7 +68,7 @@ export class DeleteUserUseCase {
 }
 
 export class GetUserByEmailUseCase {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(private readonly userRepository: UserRepository) { }
 
   async execute(email: string): Promise<UserEntity> {
     const user = await this.userRepository.findByEmail(email);
@@ -76,5 +78,28 @@ export class GetUserByEmailUseCase {
     }
 
     return user;
+  }
+}
+
+export class GetUsersByPageUseCase {
+  constructor(private readonly userRepository: UserRepository) { }
+
+  async execute(
+    page: number = Constants.PAGE,
+    limit: number = Constants.LIMIT,
+  ): Promise<PaginatedResult<UserEntity>> {
+    return this.userRepository.findByPage(page, limit);
+  }
+}
+
+export class SearchUsersUseCase {
+  constructor(private readonly userRepository: UserRepository) { }
+
+  async execute(
+    query: string,
+    page: number = Constants.PAGE,
+    limit: number = Constants.LIMIT,
+  ): Promise<PaginatedResult<UserEntity>> {
+    return this.userRepository.search(query, page, limit);
   }
 }

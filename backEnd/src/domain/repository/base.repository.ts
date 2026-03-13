@@ -1,7 +1,17 @@
-// src/domain/repository/base.repository.ts
+import { PaginatedResult } from '@/src/domain/entity/paginated.result';
+
 export abstract class BaseRepository<T> {
   abstract create(item: T): Promise<T>;
   abstract findAll(): Promise<T[]>;
+  abstract findByPage(
+    page?: number,
+    limit?: number,
+  ): Promise<PaginatedResult<T>>;
+  abstract search(
+    query: string,
+    page?: number,
+    limit?: number,
+  ): Promise<PaginatedResult<T>>;
   abstract findById(id: string): Promise<T | null>;
   abstract update(id: string, item: Partial<T>): Promise<T | null>;
   abstract delete(id: string): Promise<boolean>;

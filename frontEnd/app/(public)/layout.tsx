@@ -1,13 +1,13 @@
 // src/app/(public)/layout.tsx
-import { Navbar } from '@/src/presentation/components/layout/Navbar';
-// import { Footer } from '@/src/presentation/components/layout/Footer';
+import Footer from '@/src/presentation/components/public/layout/Footer';
+import { Navbar } from '@/src/presentation/components/public/layout/Navbar';
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen">{children}</main>
-      {/* <Footer /> */}
+      <main>{children}</main>
+      <Footer />
     </>
   );
 }

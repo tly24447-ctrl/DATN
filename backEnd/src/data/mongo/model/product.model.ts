@@ -1,10 +1,15 @@
+import { ProductEntity } from '@/src/domain/entity/product.entity';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true })
-export class ProductDocument extends Document {
+export class ProductDocument
+  extends Document
+  implements Omit<ProductEntity, 'id'>
+{
+  // Renamed from 'category' to 'categoryId' to match ProductEntity
   @Prop({ type: Types.ObjectId, ref: 'CategoryDocument', required: true })
-  category!: Types.ObjectId;
+  categoryId!: string;
 
   @Prop({ required: true, unique: true })
   name!: string;
@@ -35,7 +40,7 @@ export class ProductDocument extends Document {
     enum: ['Paperback', 'Hardcover', 'E-book'],
     default: 'Paperback',
   })
-  format!: string;
+  format!: 'Paperback' | 'Hardcover' | 'E-book';
 
   @Prop({ required: true, default: 0 })
   price!: number;

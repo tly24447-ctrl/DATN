@@ -9,4 +9,5 @@ export class UserEntity {
   avatar?: string;
   city?: string;
   createdAt?: Date;
+  _id?: string;
 }

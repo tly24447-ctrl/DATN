@@ -1,24 +1,14 @@
 'use client';
-import { UserEntity } from '@/src/domain/entity/user.entity';
 import { AuthService } from '@/src/presentation/services/auth.service';
-import { AppProviders } from '@/src/provider/provider';
 import { BookOpen, LogOut, Menu, Search, ShoppingCart, X } from 'lucide-react';
 import { useRouter } from 'next/dist/client/components/navigation';
-import { useEffect, useState } from 'react';
-import { useAuth } from '../../hooks/useAuth';
+import { useState } from 'react';
+import { useAuth } from '../../../hooks/useAuth';
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useAuth();
-  const [currUser, setCurrUser] = useState<UserEntity | null>(null);
+  const { currUser } = useAuth();
   const router = useRouter();
-  // Sync user state with AuthService
-  useEffect(() => {
-    console.log('Current user:', user);
-    if (user) {
-      AppProviders.GetUserByEmailUseCase.execute(user.email || '').then(setCurrUser).catch(console.error);
-    }
-  }, [user]);
 
   const handleLogout = async () => {
     await AuthService.logout();
@@ -59,7 +49,7 @@ export const Navbar = () => {
               </span>
             </div>
 
-            {user ? (
+            {currUser ? (
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 group cursor-pointer">
                   <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-sm">
@@ -108,7 +98,7 @@ export const Navbar = () => {
             <a href="#" className="hover:text-indigo-600">Best Sellers</a>
           </div>
           <hr />
-          {user ? (
+          {currUser ? (
             <button onClick={handleLogout} className="w-full text-left text-red-500 font-medium">
               Logout
             </button>

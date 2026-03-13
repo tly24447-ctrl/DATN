@@ -1,6 +1,8 @@
 // src/domain/use-case/user/create-user.use-case.ts
+import { PaginatedResult } from '@/src/domain/entity/paginated.result';
 import { UserEntity } from '@/src/domain/entity/user.entity';
 import { UserRepository } from '@/src/domain/repository/user.repository';
+import { Constants } from '@/src/shared/constans';
 import {
   ConflictException,
   Injectable,
@@ -83,5 +85,30 @@ export class GetUserByEmailUseCase {
     }
 
     return user;
+  }
+}
+
+@Injectable()
+export class GetUsersByPageUseCase {
+  constructor(private readonly userRepository: UserRepository) {}
+
+  async execute(
+    page: number = Constants.PAGE,
+    limit: number = Constants.LIMIT,
+  ): Promise<PaginatedResult<UserEntity>> {
+    return this.userRepository.findByPage(page, limit);
+  }
+}
+
+@Injectable()
+export class SearchUsersUseCase {
+  constructor(private readonly userRepository: UserRepository) {}
+
+  async execute(
+    query: string,
+    page: number = Constants.PAGE,
+    limit: number = Constants.LIMIT,
+  ): Promise<PaginatedResult<UserEntity>> {
+    return this.userRepository.search(query, page, limit);
   }
 }
