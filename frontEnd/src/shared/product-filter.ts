@@ -1,5 +1,6 @@
 // src/shared/utils/product-filter.ts
 import { ProductEntity } from "@/src/domain/entity/product.entity";
+import { OrderEntity } from "../domain/entity/order.entity";
 
 export const filterProducts = (
   products: ProductEntity[],
@@ -32,4 +33,33 @@ export const filterProducts = (
   });
 
   return filtered;
+};
+
+// Logic gợi ý dựa trên lịch sử đơn hàng
+export const getFrequentlyBoughtTogether = (
+  currentProductId: string,
+  allOrders: OrderEntity[]
+) => {
+  const coOccurrenceMap = new Map<string, number>();
+
+  allOrders
+    .filter(order => order.isPaid) // Chỉ tính các đơn đã mua
+    .forEach(order => {
+      const itemIds = order.orderItems.map(item => item.productId);
+
+      // Nếu đơn hàng có chứa sản phẩm hiện tại
+      if (itemIds.includes(currentProductId)) {
+        itemIds.forEach(id => {
+          if (id !== currentProductId) {
+            coOccurrenceMap.set(id, (coOccurrenceMap.get(id) || 0) + 1);
+          }
+        });
+      }
+    });
+
+  // Sắp xếp các Product ID theo tần suất xuất hiện giảm dần
+  return Array.from(coOccurrenceMap.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5) // Lấy top 4 gợi ý
+    .map(entry => entry[0]);
 };
