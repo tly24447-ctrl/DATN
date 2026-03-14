@@ -1,11 +1,11 @@
 'use client';
-import { BookOpen, Menu, Search, X } from 'lucide-react';
+import { BookOpen, Menu, X } from 'lucide-react';
 import { useRouter } from 'next/dist/client/components/navigation';
 import { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import CartIcon from './CartIcon';
-import UserMenu from './UserMenu';
 import SearchBar from './SearchBar';
+import UserMenu from './UserMenu';
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +20,7 @@ export const Navbar = () => {
           {/* Logo */}
           <div className="flex items-center gap-2">
             <BookOpen className="h-8 w-8 text-indigo-600" />
-            <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent" onClick={() => router.push("/")}>
               Bookie
             </span>
           </div>
