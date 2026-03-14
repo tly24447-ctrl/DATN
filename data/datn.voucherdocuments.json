@@ -1,0 +1,50 @@
+[{
+  "_id": {
+    "$oid": "69b53c980c9fbcaea3a21e11"
+  },
+  "code": "A50",
+  "discountType": "percentage",
+  "discountValue": 10,
+  "minOrderValue": 0,
+  "maxUses": 100,
+  "usedCount": 0,
+  "startDate": {
+    "$date": "2026-03-14T10:46:33.086Z"
+  },
+  "expirationDate": {
+    "$date": "2026-04-14T10:46:33.086Z"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2026-03-14T10:46:48.764Z"
+  },
+  "updatedAt": {
+    "$date": "2026-03-14T10:46:48.764Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69b53ca70c9fbcaea3a21e17"
+  },
+  "code": "A90",
+  "discountType": "fixed",
+  "discountValue": 100,
+  "minOrderValue": 0,
+  "maxUses": 100,
+  "usedCount": 19,
+  "startDate": {
+    "$date": "2026-03-14T10:46:49.984Z"
+  },
+  "expirationDate": {
+    "$date": "2026-04-14T10:46:49.984Z"
+  },
+  "isActive": true,
+  "createdAt": {
+    "$date": "2026-03-14T10:47:03.596Z"
+  },
+  "updatedAt": {
+    "$date": "2026-03-14T15:19:57.697Z"
+  },
+  "__v": 0
+}]
