@@ -5,20 +5,16 @@ import { Constants } from '@/src/shared/constans';
 
 
 export class CreateUserUseCase {
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(user: UserEntity): Promise<UserEntity> {
-    const existingUser = await this.userRepository.findByEmail(user.email);
-    if (existingUser) {
-      throw new Error('Email already exists');
-    }
     return this.userRepository.create(user);
   }
 }
 
 
 export class GetAllUsersUseCase {
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(): Promise<UserEntity[]> {
     return this.userRepository.findAll();
@@ -27,7 +23,7 @@ export class GetAllUsersUseCase {
 
 
 export class GetUserUseCase {
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(id: string): Promise<UserEntity> {
     const user = await this.userRepository.findById(id);
@@ -40,7 +36,7 @@ export class GetUserUseCase {
 
 
 export class UpdateUserUseCase {
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(
     id: string,
@@ -56,7 +52,7 @@ export class UpdateUserUseCase {
 
 
 export class DeleteUserUseCase {
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(id: string): Promise<boolean> {
     const deleted = await this.userRepository.delete(id);
@@ -68,7 +64,7 @@ export class DeleteUserUseCase {
 }
 
 export class GetUserByEmailUseCase {
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(email: string): Promise<UserEntity> {
     const user = await this.userRepository.findByEmail(email);
@@ -82,7 +78,7 @@ export class GetUserByEmailUseCase {
 }
 
 export class GetUsersByPageUseCase {
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(
     page: number = Constants.PAGE,
@@ -93,7 +89,7 @@ export class GetUsersByPageUseCase {
 }
 
 export class SearchUsersUseCase {
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(
     query: string,

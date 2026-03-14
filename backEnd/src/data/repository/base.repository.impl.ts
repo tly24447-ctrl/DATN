@@ -1,4 +1,4 @@
-import { Model, Document, QueryFilter } from 'mongoose';
+import { Model, Document, QueryFilter, ClientSession } from 'mongoose';
 import { BaseRepository } from '@/src/domain/repository/base.repository';
 import { PaginatedResult } from '@/src/domain/entity/paginated.result';
 import { Constants } from '@/src/shared/constans';
@@ -34,9 +34,9 @@ export abstract class BaseRepositoryImpl<
     };
   }
 
-  async create(item: any): Promise<T> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    return await this.model.create(item);
+  async create(item: any, session?: ClientSession): Promise<T> {
+    const createdItem = new this.model(item);
+    return (await createdItem.save({ session })) as T;
   }
 
   async findAll(): Promise<T[]> {
@@ -64,16 +64,29 @@ export abstract class BaseRepositoryImpl<
     };
   }
 
-  async findById(id: string): Promise<T | null> {
-    return await this.model.findById(id).exec();
+  async findById(id: string, session?: ClientSession): Promise<T | null> {
+    return await this.model
+      .findById(id)
+      .session(session || null)
+      .exec();
   }
 
-  async update(id: string, item: Partial<T>): Promise<T | null> {
-    return await this.model.findByIdAndUpdate(id, item, { new: true }).exec();
+  async update(
+    id: string,
+    item: Partial<T>,
+    session?: ClientSession,
+  ): Promise<T | null> {
+    return await this.model
+      .findByIdAndUpdate(id, item, { new: true })
+      .session(session || null) // Áp dụng session vào query update
+      .exec();
   }
 
-  async delete(id: string): Promise<boolean> {
-    const result = await this.model.findByIdAndDelete(id).exec();
+  async delete(id: string, session?: ClientSession): Promise<boolean> {
+    const result = await this.model
+      .findByIdAndDelete(id)
+      .session(session || null)
+      .exec();
     return !!result;
   }
 }

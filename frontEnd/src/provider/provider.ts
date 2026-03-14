@@ -45,6 +45,8 @@ import {
   UpdateProductUseCase
 } from '@/src/domain/use-case/product.use-case';
 
+import { VnPayRepositoryImpl } from '@/src/data/repository/vn-pay.repository.impl';
+import { CreateVnPayUrlUseCase, VerifyVnPayPaymentUseCase } from '@/src/domain/use-case/vn-pay.use-case';
 import {
   CreateVoucherUseCase,
   DeleteVoucherUseCase,
@@ -54,6 +56,8 @@ import {
   SearchVouchersUseCase,
   UpdateVoucherUseCase
 } from '@/src/domain/use-case/voucher.use-case';
+import { PaymentRepositoryImpl } from '../data/repository/payment.repository.impl';
+import { GenerateQrCodeUseCase, HandleWebhookUseCase } from '../domain/use-case/payement.use-case';
 
 // --- Repository Instantiation ---
 const userRepository = new UserRepositoryImpl();
@@ -61,6 +65,8 @@ const categoryRepository = new CategoryRepositoryImpl();
 const orderRepository = new OrderRepositoryImpl();
 const productRepository = new ProductRepositoryImpl();
 const voucherRepository = new VoucherRepositoryImpl();
+const vnPayRepository = new VnPayRepositoryImpl();
+const paymentRepository = new PaymentRepositoryImpl();
 
 export const AppProviders = {
   // --- User Domain ---
@@ -113,4 +119,14 @@ export const AppProviders = {
   DeleteVoucherUseCase: new DeleteVoucherUseCase(voucherRepository),
   GetVouchersByPageUseCase: new GetVouchersByPageUseCase(voucherRepository),
   SearchVouchersUseCase: new SearchVouchersUseCase(voucherRepository),
+
+  // --- Vnpay domain ---
+  VnPayRepository: vnPayRepository,
+  CreateVnPayUrlUseCase: new CreateVnPayUrlUseCase(vnPayRepository),
+  VerifyVnPayPaymentUseCase: new VerifyVnPayPaymentUseCase(vnPayRepository),
+
+  // --- Payment domain ---
+  PaymentRepository: paymentRepository,
+  GenerateQrCodeUseCase: new GenerateQrCodeUseCase(paymentRepository),
+  HandleWebhookUseCase: new HandleWebhookUseCase(paymentRepository),
 };

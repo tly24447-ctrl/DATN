@@ -90,7 +90,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products, onEdit, onDelete 
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center text-amber-500 gap-1 text-sm font-bold">
                   <Star size={14} fill="currentColor" />
-                  {product.rating || 0}
+                  {product.rating?.average || 0}
                 </div>
                 <div className="text-xs text-slate-500 mt-1">{product.selled || 0} sold</div>
               </td>

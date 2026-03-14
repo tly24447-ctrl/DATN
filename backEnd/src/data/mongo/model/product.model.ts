@@ -1,13 +1,49 @@
-import { ProductEntity } from '@/src/domain/entity/product.entity';
+import * as productEntity from '@/src/domain/entity/product.entity';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+
+// 1. Định nghĩa Schema cho chi tiết từng đánh giá
+@Schema({ _id: false })
+class RatingDetailDocument implements productEntity.RatingDetail {
+  @Prop({ required: true })
+  userId!: string;
+
+  @Prop()
+  userName?: string;
+
+  @Prop()
+  avatar?: string;
+
+  @Prop({ required: true, min: 1, max: 5 })
+  score!: number;
+
+  @Prop()
+  comment?: string; // Thêm cột comment trong DB
+
+  @Prop({ default: Date.now })
+  createdAt!: Date;
+}
+const RatingDetailSchema = SchemaFactory.createForClass(RatingDetailDocument);
+
+// 2. Định nghĩa Schema cho thông tin tổng hợp Rating
+@Schema({ _id: false })
+class RatingInfoDocument implements productEntity.RatingInfo {
+  @Prop({ default: 0 })
+  average!: number;
+
+  @Prop({ default: 0 })
+  count!: number;
+
+  @Prop({ type: [RatingDetailSchema], default: [] })
+  details!: productEntity.RatingDetail[];
+}
+const RatingInfoSchema = SchemaFactory.createForClass(RatingInfoDocument);
 
 @Schema({ timestamps: true })
 export class ProductDocument
   extends Document
-  implements Omit<ProductEntity, 'id'>
+  implements Omit<productEntity.ProductEntity, 'id'>
 {
-  // Renamed from 'category' to 'categoryId' to match ProductEntity
   @Prop({ type: Types.ObjectId, ref: 'CategoryDocument', required: true })
   categoryId!: string;
 
@@ -48,8 +84,9 @@ export class ProductDocument
   @Prop({ required: true, default: 0 })
   countInStock!: number;
 
-  @Prop({ default: 0 })
-  rating!: number;
+  // 3. Thay thế rating: number bằng ratingInfo phức hợp
+  @Prop({ type: RatingInfoSchema, default: () => ({}) })
+  rating?: productEntity.RatingInfo;
 
   @Prop()
   description?: string;

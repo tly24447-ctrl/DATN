@@ -9,6 +9,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { ClientSession } from 'mongoose';
 
 @Injectable()
 export class CreateProductUseCase {
@@ -42,8 +43,8 @@ export class GetAllProductsUseCase {
 export class GetProductUseCase {
   constructor(private readonly productRepository: ProductRepository) {}
 
-  async execute(id: string): Promise<ProductEntity> {
-    const product = await this.productRepository.findById(id);
+  async execute(id: string, session?: ClientSession): Promise<ProductEntity> {
+    const product = await this.productRepository.findById(id, session);
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
@@ -58,8 +59,9 @@ export class UpdateProductUseCase {
   async execute(
     id: string,
     data: Partial<ProductEntity>,
+    session?: ClientSession,
   ): Promise<ProductEntity | null> {
-    const updated = await this.productRepository.update(id, data);
+    const updated = await this.productRepository.update(id, data, session);
     if (!updated) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }

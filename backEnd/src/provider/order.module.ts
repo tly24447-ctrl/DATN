@@ -12,9 +12,11 @@ import {
 import { OrderController } from '@/src/presentation/controllers/order.controller';
 import { DataServicesModule } from '@/src/provider/data-services.module';
 import { Module } from '@nestjs/common';
+import { VoucherModule } from './voucher.module';
+import { ProductModule } from './product.module';
 
 @Module({
-  imports: [DataServicesModule], // Provides OrderRepository implementation
+  imports: [DataServicesModule, VoucherModule, ProductModule], // Provides OrderRepository implementation
   controllers: [OrderController],
   providers: [
     CreateOrderUseCase,

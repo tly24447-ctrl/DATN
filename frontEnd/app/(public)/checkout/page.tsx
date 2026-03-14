@@ -1,7 +1,9 @@
 'use client';
 
-import { createOrderAction } from '@/src/presentation/action/order.action';
+import { PaymentMethod, PaymentMethodLabel } from '@/src/domain/entity/payment.method';
+import { createOrderAction, CreateOrderDto } from '@/src/presentation/action/order.action';
 import { validateVoucherAction } from '@/src/presentation/action/voucher.action';
+import { VietQRModal } from '@/src/presentation/components/public/checkout/VietQRModal';
 import { useCart } from '@/src/presentation/context/CartContext';
 import { useAuth } from '@/src/presentation/hooks/useAuth';
 import {
@@ -15,21 +17,47 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
 
 const Page = () => {
   // const {  } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('Stripe');
+  const [paymentMethod, setPaymentMethod] = useState(PaymentMethod.COD);
   const [voucherCode, setVoucherCode] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isVnQr, setIsVnQr] = useState<{ qrUrl: string; description: string; amount: number; orderId: string } | null>(null);
   const { appliedVoucher, applyVoucher, removeVoucher, cart, cartTotal, voucherDiscount, clearCart } = useCart();
   const router = useRouter();
   const { currUser } = useAuth();
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const shippingPrice = cartTotal > 100 ? 0 : 10; // Free shipping over $100
   const finalTotal = cartTotal + shippingPrice;
+
+  useEffect(() => {
+    if (isVnQr) {
+      const socket = io('http://localhost:3001');
+
+      socket.on('connect', () => {
+        console.log("✅ Socket connected:", socket.id);
+        socket.emit('joinOrderRoom', isVnQr.orderId);
+      });
+
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      socket.on('paymentSuccess', (data: any) => {
+        console.log("🎉 Received paymentSuccess event:", data); // Log này có hiện không?
+        console.log("Comparing:", data.orderId, "with", isVnQr.orderId);
+        if (data.orderId === isVnQr.orderId) {
+          router.push(`/checkout/order-success?id=${isVnQr.orderId}`);
+        }
+      });
+
+      return () => { socket.disconnect(); };
+    }
+  }, [isVnQr, router]);
 
   const handleApplyVoucher = async () => {
     if (!voucherCode.trim()) return;
@@ -62,7 +90,7 @@ const Page = () => {
 
     try {
       // 1. Prepare data for the action
-      const orderPayload = {
+      const orderPayload: CreateOrderDto = {
         userId: currUser?._id || '',
         voucher: appliedVoucher,
         orderItems: cart,
@@ -75,17 +103,33 @@ const Page = () => {
       // 2. Execute Server Action
       console.log("Order created:", orderPayload);
       const result = await createOrderAction(orderPayload);
-
       if (result.success) {
-        console.log("Order created:", result.orderId);
+        // Handle Redirection (External vs Internal)
+        console.log("result", result);
+        if (paymentMethod === PaymentMethod.VNPAY) {
+          if (result.paymentUrl) {
+            window.location.href = result.paymentUrl;
+          }
+        }
+        if (paymentMethod === PaymentMethod.VNQR) {
+          console.log("result VNQR", result);
+          if (result.qrData) {
+            setIsVnQr(result.qrData);
+            setIsSuccess(true); // Đánh dấu đã đặt hàng thành công
+            clearCart();
+            removeVoucher();
+            return;
+          }
+        }
+        console.log("result isVnQr", isVnQr);
         clearCart();
-        // 3. Redirect to a success page or order details
-        router.push(`/order-success?id=${result.orderId}`);
         removeVoucher();
-      } else {
-        setError(result.message || "Something went wrong.");
-        setIsSubmitting(false);
+        return; // Exit early on success
       }
+
+      // Handle Error
+      setError(result.message || "Something went wrong.");
+      setIsSubmitting(false);
     } catch (err) {
       console.error("", err);
       setError("Failed to connect to server. Please try again.");
@@ -93,7 +137,7 @@ const Page = () => {
     }
   };
 
-  if (cart.length === 0) {
+  if (cart.length === 0 && !isSuccess) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4">
         <p className="text-slate-500">Your cart is empty. You cannot checkout.</p>
@@ -141,21 +185,19 @@ const Page = () => {
                 </div>
                 Payment Method
               </h2>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  { id: 'Stripe', label: 'Stripe' },
-                  { id: 'PayPal', label: 'PayPal' },
-                  { id: 'COD', label: 'Cash on Delivery' }
-                ].map((method) => {
+                {Object.values(PaymentMethod).map((methodId) => {
                   // Check if this method is currently selected
-                  const isSelected = paymentMethod === method.id;
+                  const isSelected = paymentMethod === methodId;
+                  const label = PaymentMethodLabel[methodId];
 
                   return (
                     <label
-                      key={method.id}
+                      key={methodId}
                       className={`p-4 border-2 rounded-2xl cursor-pointer transition-all flex items-center justify-between group ${isSelected
-                          ? 'border-indigo-600 bg-indigo-50 shadow-sm shadow-indigo-100'
-                          : 'border-slate-100 hover:border-slate-300 bg-slate-50/30'
+                        ? 'border-indigo-600 bg-indigo-50 shadow-sm shadow-indigo-100'
+                        : 'border-slate-100 hover:border-slate-300 bg-slate-50/30'
                         }`}
                     >
                       <div className="flex items-center gap-3">
@@ -165,10 +207,10 @@ const Page = () => {
                           {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
                         </div>
 
-                        {/* Label Text */}
+                        {/* Label Text from PaymentMethodLabel */}
                         <span className={`font-bold transition-colors ${isSelected ? 'text-indigo-700' : 'text-slate-600 group-hover:text-slate-900'
                           }`}>
-                          {method.label}
+                          {label}
                         </span>
                       </div>
 
@@ -176,7 +218,8 @@ const Page = () => {
                         type="radio"
                         name="payment"
                         className="hidden"
-                        onChange={() => setPaymentMethod(method.id)}
+                        value={methodId}
+                        onChange={() => setPaymentMethod(methodId)}
                         checked={isSelected}
                       />
 
@@ -304,6 +347,31 @@ const Page = () => {
           </div>
         </form>
       </div>
+
+      {/* Thêm component VietQRModal vào cuối trang */}
+      {isVnQr && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="relative w-full max-w-md">
+            {/* Nút đóng Modal (Tùy chọn) */}
+            <button
+              onClick={() => router.push(`/checkout/order-success?id=${isVnQr.orderId}`)}
+              className="absolute -top-12 right-0 text-white hover:text-indigo-200 flex items-center gap-2 font-bold text-sm transition-colors"
+            >
+              Tiếp tục đơn hàng <X size={20} />
+            </button>
+
+            <VietQRModal
+              qrUrl={isVnQr.qrUrl}
+              amount={isVnQr.amount}
+              orderId={isVnQr.orderId}
+            />
+
+            <p className="text-center text-white/70 text-[10px] mt-4 uppercase tracking-widest font-bold">
+              Vui lòng không đóng cửa sổ này cho đến khi giao dịch hoàn tất
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -19,6 +19,7 @@ export class OrderEntity {
   shippingPrice!: number;
   totalPrice!: number;
   isCart!: boolean;
+  vnPayId?: string;
   isPaid!: boolean;
   paidAt?: Date;
   isDelivered!: boolean;

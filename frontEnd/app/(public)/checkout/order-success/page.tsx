@@ -90,7 +90,7 @@ const SuccessContent = () => {
 };
 
 // The main page component
-export default function OrderSuccessPage() {
+export default function Page() {
   return (
     <div className="bg-slate-50 min-h-screen py-20 px-4">
       {/* Suspense is required when using useSearchParams in App Router */}

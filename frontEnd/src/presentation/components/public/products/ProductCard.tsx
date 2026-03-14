@@ -78,7 +78,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1 text-amber-500">
             <Star size={12} fill="currentColor" />
-            <span className="text-xs font-bold">{product.rating || 0}</span>
+            <span className="text-xs font-bold">{product.rating?.average || 0}</span>
           </div>
           <span className="text-[10px] text-slate-400 font-medium">
             {product.selled || 0} sold

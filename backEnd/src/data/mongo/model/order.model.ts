@@ -49,9 +49,12 @@ export class OrderDocument extends Document implements Omit<OrderEntity, 'id'> {
   @Prop({ required: true, default: 0 })
   totalPrice!: number;
 
-  // Added isCart field to match the updated OrderEntity
   @Prop({ required: true, default: true })
   isCart!: boolean;
+
+  // Thêm trường vnPayId để lưu mã giao dịch hoặc mã tra cứu từ VNPay
+  @Prop({ type: String })
+  vnPayId?: string;
 
   @Prop({ default: false })
   isPaid!: boolean;
@@ -64,6 +67,9 @@ export class OrderDocument extends Document implements Omit<OrderEntity, 'id'> {
 
   @Prop()
   deliveredAt?: Date;
+
+  // Timestamps sẽ tự động tạo createdAt và updatedAt
+  createdAt?: Date;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(OrderDocument);

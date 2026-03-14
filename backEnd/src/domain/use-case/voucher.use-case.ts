@@ -9,6 +9,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { ClientSession } from 'mongoose';
 
 @Injectable()
 export class CreateVoucherUseCase {
@@ -42,8 +43,8 @@ export class GetAllVouchersUseCase {
 export class GetVoucherUseCase {
   constructor(private readonly voucherRepository: VoucherRepository) {}
 
-  async execute(id: string): Promise<VoucherEntity> {
-    const voucher = await this.voucherRepository.findById(id);
+  async execute(id: string, session?: ClientSession): Promise<VoucherEntity> {
+    const voucher = await this.voucherRepository.findById(id, session);
     if (!voucher) {
       throw new NotFoundException(`Voucher with ID ${id} not found`);
     }
@@ -58,8 +59,9 @@ export class UpdateVoucherUseCase {
   async execute(
     id: string,
     data: Partial<VoucherEntity>,
+    session?: ClientSession,
   ): Promise<VoucherEntity | null> {
-    const updated = await this.voucherRepository.update(id, data);
+    const updated = await this.voucherRepository.update(id, data, session);
     if (!updated) {
       throw new NotFoundException(`Voucher with ID ${id} not found`);
     }

@@ -1,25 +1,30 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ProductEntity } from '@/src/domain/entity/product.entity';
-import { useCart } from '@/src/presentation/context/CartContext'; // Import the hook
-import { 
-  ShoppingCart, 
-  Star, 
-  Truck, 
-  ShieldCheck, 
-  BookOpen, 
-  Globe, 
-  Layers, 
+import { ProductEntity, RatingInfo } from '@/src/domain/entity/product.entity';
+import { useCart } from '@/src/presentation/context/CartContext';
+import { useAuth } from '@/src/presentation/hooks/useAuth';
+import { AppProviders } from '@/src/provider/provider';
+import {
+  BookOpen,
   Building2,
   CalendarDays,
+  CheckCircle2,
+  Globe,
   Hash,
+  Heart,
+  Layers,
+  MessageSquare,
   Minus,
   Plus,
-  Heart,
-  CheckCircle2
+  ShieldCheck,
+  ShoppingCart,
+  Star, // Import Star để render rating của từng user
+  Truck
 } from 'lucide-react';
 import Image from 'next/image';
+import React, { useState } from 'react';
+import { toast } from 'sonner';
+import RatingEditor from './RatingEditor';
 
 interface ProductDetailsProps {
   product: ProductEntity;
@@ -28,11 +33,13 @@ interface ProductDetailsProps {
 const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
-  const { addToCart } = useCart(); // Initialize the cart hook
+  const { addToCart } = useCart();
+  const { currUser } = useAuth();
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const hasDiscount = product.discount && product.discount > 0;
-  const discountedPrice = hasDiscount 
-    ? product.price * (1 - product.discount! / 100) 
+  const discountedPrice = hasDiscount
+    ? product.price * (1 - product.discount! / 100)
     : product.price;
 
   const handleQuantity = (type: 'inc' | 'dec') => {
@@ -42,26 +49,87 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
 
   const handleAddToCart = () => {
     addToCart(product, quantity);
-    
-    // Provide visual feedback
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 3000);
+  };
+
+  const updateComment = async (cmt: string) => {
+    const ratingData = product.rating;
+    const currentUserId = currUser?._id;
+    const productId = product._id || '';
+    // Tránh gửi request nếu đang update hoặc nội dung không thay đổi
+    const existingDetail = ratingData?.details?.find((d) => d.userId === currentUserId);
+    if (isUpdating || existingDetail?.comment === cmt) return;
+    const hasVoted = !!existingDetail;
+
+    setIsUpdating(true);
+    try {
+      let newCount = ratingData?.count || 3;
+      let newDetails = [...(ratingData?.details || [])];
+
+      // Mặc định score là 5 nếu user chưa từng vote mà đã nhập comment
+      const defaultScore = 5;
+
+      if (hasVoted) {
+        // Trường hợp đã có rating: Chỉ cập nhật comment và ngày tạo
+        newDetails = newDetails.map((d) =>
+          d.userId === currentUserId
+            ? { ...d, comment: cmt, createdAt: new Date() }
+            : d
+        );
+      } else {
+        // Trường hợp chưa từng rating: Tạo mới record detail
+        newCount += 1;
+        newDetails.push({
+          userId: currentUserId || '',
+          score: defaultScore, // Bắt buộc phải có score theo interface
+          comment: cmt,
+          createdAt: new Date(),
+        });
+      }
+
+      // Tính lại Average (trong trường hợp user mới chưa vote mà đã comment)
+      const totalScore = newDetails.reduce((sum, item) => sum + item.score, 0);
+      const newAverage = totalScore / newCount;
+
+      const updatedRatingInfo: RatingInfo = {
+        average: newAverage,
+        count: newCount,
+        details: newDetails,
+      };
+
+      // Gọi API cập nhật
+      const updatedProduct = await AppProviders.UpdateProductUseCase.execute(productId, {
+        rating: updatedRatingInfo,
+      });
+
+      if (updatedProduct) {
+        toast.success("Đã lưu bình luận của bạn!");
+        window.location.reload();
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message || "Không thể lưu bình luận");
+      console.error("Update Comment Error:", error);
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   return (
     <div className="bg-white min-h-screen pb-20">
       <div className="container mx-auto px-4 md:px-8 pt-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          
+
           {/* Left Column: Image (Sticky) */}
           <div className="lg:col-span-5">
             <div className="lg:sticky lg:top-24">
               <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-50">
                 {product.image ? (
-                  <Image 
-                    src={product.image} 
-                    alt={product.name} 
-                    fill 
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
                     className="object-cover"
                     priority
                   />
@@ -70,7 +138,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
                     <BookOpen size={80} />
                   </div>
                 )}
-                
+
                 {hasDiscount && (
                   <div className="absolute top-6 left-6 bg-orange-500 text-white font-black px-4 py-2 rounded-lg shadow-lg">
                     SAVE {product.discount}%
@@ -91,12 +159,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
               </h1>
               <div className="flex flex-wrap items-center gap-6">
                 <p className="text-xl text-slate-500 italic">by <span className="text-slate-900 font-semibold not-italic">{product.author}</span></p>
-                <div className="flex items-center gap-1 text-amber-500">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={18} fill={i < Math.floor(product.rating || 0) ? "currentColor" : "none"} className={i < Math.floor(product.rating || 0) ? "" : "text-slate-200"} />
-                  ))}
-                  <span className="ml-2 text-sm font-bold text-slate-900">{product.rating}</span>
-                </div>
+                <RatingEditor
+                  productId={product._id || ''}
+                  initialRating={product.rating || { average: 0, count: 0, details: [] }}
+                  currentUserId={currUser?._id || ''}
+                />
               </div>
             </div>
 
@@ -134,14 +201,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
             {/* Add to Cart Actions */}
             <div className="flex flex-col sm:flex-row gap-4 items-center pt-4">
               <div className="flex items-center border-2 border-slate-200 rounded-xl overflow-hidden bg-white">
-                <button 
+                <button
                   onClick={() => handleQuantity('dec')}
                   className="p-4 hover:bg-slate-50 transition-colors"
                 >
                   <Minus size={20} />
                 </button>
                 <span className="w-12 text-center font-bold text-lg">{quantity}</span>
-                <button 
+                <button
                   onClick={() => handleQuantity('inc')}
                   className="p-4 hover:bg-slate-50 transition-colors"
                 >
@@ -149,14 +216,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
                 </button>
               </div>
 
-              <button 
+              <button
                 onClick={handleAddToCart}
                 disabled={product.countInStock === 0 || isAdded}
-                className={`flex-1 w-full flex items-center justify-center gap-3 py-4 rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:cursor-not-allowed ${
-                  isAdded 
-                  ? "bg-green-600 text-white" 
+                className={`flex-1 w-full flex items-center justify-center gap-3 py-4 rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:cursor-not-allowed ${isAdded
+                  ? "bg-green-600 text-white"
                   : "bg-slate-900 text-white hover:bg-blue-600"
-                }`}
+                  }`}
               >
                 {isAdded ? (
                   <>
@@ -230,6 +296,111 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
                 <span className="font-bold">Fast Delivery Available.</span> Orders placed before 2 PM ship the same day.
               </div>
             </div>
+
+            {/* --- REVIEWS SECTION --- */}
+            <div className="pt-12 border-t border-slate-100">
+              <div className="flex items-center gap-2 mb-8">
+                <MessageSquare className="text-slate-900" size={24} />
+                <h3 className="text-2xl font-black text-slate-900">Customer Reviews</h3>
+                <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-sm font-bold">
+                  {product.rating?.count || 0}
+                </span>
+              </div>
+
+              {/* --- NEW: Input Section for Current User --- */}
+              {currUser && (
+                <div className="mb-10 bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                  <h4 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    {product.rating?.details.some(d => d.userId === currUser._id)
+                      ? "Update your review"
+                      : "Write a review"}
+                  </h4>
+                  <div className="space-y-4">
+                    <textarea
+                      rows={3}
+                      placeholder="Share your thoughts about this book..."
+                      className="w-full p-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm transition-all resize-none"
+                      defaultValue={product.rating?.details.find(d => d.userId === currUser._id)?.comment || ""}
+                      onBlur={async (e) => {
+                        const newComment = e.target.value;
+                        const existingRating = product.rating?.details.find(d => d.userId === currUser._id);
+
+                        // Chỉ update nếu đã có rating (score) từ trước hoặc user vừa nhập text
+                        if (existingRating || newComment) {
+                          try {
+                            updateComment(newComment);
+                            console.log("Saving comment:", newComment);
+                          } catch (err) {
+                            console.error("Failed to save comment", err);
+                          }
+                        }
+                      }}
+                    />
+                    <p className="text-[11px] text-slate-400 italic">
+                      * Your comment will be saved automatically when you click outside the box.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* --- Reviews List --- */}
+              <div className="space-y-6">
+                {product.rating?.details && product.rating.details.length > 0 ? (
+                  product.rating.details.map((review, idx) => {
+                    const isOwnReview = currUser && review.userId === currUser._id;
+
+                    return (
+                      <div
+                        key={idx}
+                        className={`bg-white border rounded-2xl p-6 shadow-sm transition-all ${isOwnReview ? "border-blue-200 ring-1 ring-blue-50" : "border-slate-100"
+                          }`}
+                      >
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className={`w-10 h-10 flex items-center justify-center rounded-full font-bold overflow-hidden border-2 border-white shadow-sm ${isOwnReview ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-600"
+                            }`}>
+                            {review.userId.substring(0, 2).toUpperCase()}
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-black text-slate-900 leading-none mb-1">
+                              {isOwnReview ? "Your Review" : `User_${review.userId.substring(review.userId.length - 4)}`}
+                            </p>
+                            <div className="flex text-amber-400">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  size={14}
+                                  fill={i < review.score ? "currentColor" : "none"}
+                                  className={i < review.score ? "" : "text-slate-200"}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <span className="text-[11px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded">
+                            {new Date(review.createdAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </span>
+                        </div>
+
+                        <p className="text-slate-600 text-sm leading-relaxed pl-1">
+                          {review.comment || (
+                            <span className="italic text-slate-400">No written comment provided.</span>
+                          )}
+                        </p>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="text-center py-12 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+                    <p className="text-slate-400 font-medium italic">No reviews yet. Be the first to rate this book!</p>
+                  </div>
+                )}
+              </div>
+            </div>
+            {/* --- END REVIEWS SECTION --- */}
 
           </div>
         </div>

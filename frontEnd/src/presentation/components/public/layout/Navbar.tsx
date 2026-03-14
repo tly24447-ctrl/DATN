@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import CartIcon from './CartIcon';
 import UserMenu from './UserMenu';
+import SearchBar from './SearchBar';
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,16 +26,7 @@ export const Navbar = () => {
           </div>
 
           {/* Desktop Search (Centered) */}
-          <div className="hidden md:flex flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <input
-                type="text"
-                placeholder="Search by title, author..."
-                className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 pl-10 pr-4 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all text-sm outline-none"
-              />
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-            </div>
-          </div>
+          <SearchBar />
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-5">

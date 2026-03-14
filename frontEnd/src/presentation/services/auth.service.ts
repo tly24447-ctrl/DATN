@@ -24,11 +24,7 @@ const syncUserWithBackend = async (user: User, isOAuth = false) => {
       name: user.displayName || 'temp-name',
     });
   } catch (error) {
-
     console.log('User exists or error creating, attempting update...', error);
-    await AppProviders.GetUserByEmailUseCase.execute(user.email || '').then(async (existingUser) =>  {
-      console.log('Existing user found:', existingUser);
-    });
   }
 };
 

@@ -1,18 +1,21 @@
 'use server';
 
 import { OrderEntity, OrderItem } from "@/src/domain/entity/order.entity";
+import { PaymentMethod } from "@/src/domain/entity/payment.method";
 import { VoucherEntity } from "@/src/domain/entity/voucher.entity";
 import { AppProviders } from "@/src/provider/provider";
 
-export async function createOrderAction(formData: {
+export interface CreateOrderDto {
   userId: string;
   voucher?: VoucherEntity | null;
   orderItems: OrderItem[];
-  paymentMethod: string;
+  paymentMethod: PaymentMethod;
   itemsPrice: number;
   shippingPrice: number;
   totalPrice: number;
-}) {
+}
+
+export async function createOrderAction(formData: CreateOrderDto) {
   try {
     const order = new OrderEntity();
     order.userId = formData.userId;
@@ -27,45 +30,68 @@ export async function createOrderAction(formData: {
     order.isDelivered = false;
     order.createdAt = new Date();
 
-    // 1. Update Product Stock
-    for (const item of formData.orderItems) {
-      // Fetch current product to get latest countInStock
-      const product = await AppProviders.GetProductUseCase.execute(item.productId);
-      
-      if (!product) {
-        throw new Error(`Product ${item.name} not found`);
-      }
-
-      const newStock = (product.countInStock || 0) - item.amount;
-
-      if (newStock < 0) {
-        throw new Error(`Insufficient stock for ${item.name}`);
-      }
-
-      // Update the product stock in DB
-      await AppProviders.UpdateProductUseCase.execute(item.productId, {
-        countInStock: newStock
-      });
-      
-      console.log(`Updated stock for ${item.name}: ${newStock}`);
-    }
-
-    // 2. Update Voucher count if applicable
-    if (formData.voucher && formData.voucher._id) {
-      const currentCount = formData.voucher.usedCount || 0;
-      console.log(`Updating voucher ${formData.voucher._id}. Current count: ${currentCount}`);
-
-      await AppProviders.UpdateVoucherUseCase.execute(
-        formData.voucher._id,
-        { usedCount: currentCount + 1 }
-      );
-    }
-
     // 3. Create the order
     const result = await AppProviders.CreateOrderUseCase.execute(order);
 
+    // 4. Handle VnPay Redirection logic
+    if (formData.paymentMethod === PaymentMethod.VNPAY) {
+      try {
+        // 1. Get the use case from your providers
+        const createVnPayUrlUseCase = AppProviders.CreateVnPayUrlUseCase;
+
+        // 2. Execute the use case
+        // Note: In a production server environment, you might need to extract 
+        // the IP from headers (e.g., headers().get('x-forwarded-for'))
+        const paymentUrl = await createVnPayUrlUseCase.execute({
+          orderId: result._id || '',
+          amount: order.totalPrice, // or formData.totalPrice
+          ipAddress: '127.0.0.1',     // Replace with actual client IP
+        });
+        console.log("paymentUrl", paymentUrl);
+        // 3. Return the URL so the frontend can redirect the user
+        return {
+          success: true,
+          orderId: result._id,
+          paymentUrl: paymentUrl
+        };
+      } catch (error) {
+        console.error('VnPay URL Generation Error:', error);
+        return {
+          success: false,
+          message: "Failed to initialize VnPay payment."
+        };
+      }
+    }
+
+    if (formData.paymentMethod === PaymentMethod.VNQR) {
+      try {
+        // 1. Lấy Use Case từ providers
+        const generateQrCodeUseCase = AppProviders.GenerateQrCodeUseCase;
+
+        const roundedAmount = Math.round(order.totalPrice);
+        // 2. Thực thi lấy mã QR
+        const qrData = await generateQrCodeUseCase.execute(
+          result._id || '', 
+          roundedAmount
+        );
+
+        // 3. Trả về thông tin QR để Frontend hiển thị Modal thanh toán
+        return {
+          success: true,
+          orderId: result._id,
+          paymentMethod: PaymentMethod.VNQR,
+          qrData: qrData // Chứa { qrUrl, description }
+        };
+      } catch (error) {
+        console.error('VietQR Generation Error:', error);
+        return {
+          success: false,
+          message: "Không thể tạo mã QR thanh toán."
+        };
+      }
+    }
     return { success: true, orderId: result._id };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Order creation error:", error);
     return {

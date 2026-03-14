@@ -33,7 +33,9 @@ export default function Page() {
       : await AuthService.signUpWithEmail(email, password);
 
     setLoading(false);
+    console.log("user", user);
     if (user) {
+      console.log("push");
       router.push('/');
     } else {
       setError("Authentication failed. Please check your credentials.");
@@ -44,7 +46,10 @@ export default function Page() {
     setLoading(true);
     const user = await AuthService.loginWithGoogle();
     setLoading(false);
-    if (user) router.push('/');
+    if (user) {
+      console.log("push");
+      router.push('/');
+    }
   };
 
   return (
