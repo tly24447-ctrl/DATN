@@ -34,6 +34,8 @@ $ npm install
 ## Compile and run the project
 
 ```bash
+& "C:\Program Files\MongoDB\Server\8.2\bin\mongod.exe" --port 27017 --dbpath "C:\data\db" --replSet rs0
+
 # development
 $ npm run start
 
