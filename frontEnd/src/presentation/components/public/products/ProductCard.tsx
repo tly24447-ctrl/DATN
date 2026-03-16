@@ -90,11 +90,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
           <div className="flex flex-col">
             {hasDiscount && (
               <span className="text-[10px] text-slate-400 line-through">
-                ${product.price.toLocaleString()}
+                {product.price.toLocaleString('vi-VN')}₫
               </span>
             )}
             <span className="text-lg font-black text-slate-900">
-              ${discountedPrice.toLocaleString()}
+              {discountedPrice.toLocaleString('vi-VN')}₫
             </span>
           </div>
 

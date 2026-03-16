@@ -12,4 +12,4 @@ import { PaymentGateway } from '../presentation/gateways/payment.gateway';
   providers: [VnPayService, PaymentService, PaymentGateway],
   exports: [VnPayService, PaymentService, PaymentGateway], // Export if other modules need to generate URLs
 })
-export class VnPayModule {}
+export class PayModule {}

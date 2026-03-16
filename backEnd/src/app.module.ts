@@ -5,7 +5,8 @@ import { UserModule } from '@/src/provider/user.module';
 import { VoucherModule } from '@/src/provider/voucher.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { VnPayModule } from '@/src/provider/pay.module';
+import { PayModule } from '@/src/provider/pay.module';
+import { WebSettingModule } from './provider/web-setting.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { VnPayModule } from '@/src/provider/pay.module';
     VoucherModule,
     ProductModule,
     OrderModule,
-    VnPayModule,
+    PayModule,
+    WebSettingModule,
   ],
   controllers: [],
   providers: [],

@@ -36,6 +36,9 @@ $ npm install
 ```bash
 & "C:\Program Files\MongoDB\Server\8.2\bin\mongod.exe" --port 27017 --dbpath "C:\data\db" --replSet rs0
 
+mongosh
+rs.initiate()
+
 # development
 $ npm run start
 

@@ -58,6 +58,8 @@ import {
 } from '@/src/domain/use-case/voucher.use-case';
 import { PaymentRepositoryImpl } from '../data/repository/payment.repository.impl';
 import { GenerateQrCodeUseCase, HandleWebhookUseCase } from '../domain/use-case/payement.use-case';
+import { WebSettingRepositoryImpl } from '../data/repository/web-setting.repository.impl';
+import { CreateWebSettingUseCase, GetWebSettingUseCase, UpdateWebSettingUseCase } from '../domain/use-case/web-setting.use-case';
 
 // --- Repository Instantiation ---
 const userRepository = new UserRepositoryImpl();
@@ -67,6 +69,7 @@ const productRepository = new ProductRepositoryImpl();
 const voucherRepository = new VoucherRepositoryImpl();
 const vnPayRepository = new VnPayRepositoryImpl();
 const paymentRepository = new PaymentRepositoryImpl();
+const webSettingRepository = new WebSettingRepositoryImpl();
 
 export const AppProviders = {
   // --- User Domain ---
@@ -129,4 +132,10 @@ export const AppProviders = {
   PaymentRepository: paymentRepository,
   GenerateQrCodeUseCase: new GenerateQrCodeUseCase(paymentRepository),
   HandleWebhookUseCase: new HandleWebhookUseCase(paymentRepository),
+
+  // --- WebSetting domain ---
+  WebSettingRepository: webSettingRepository,
+  GetWebSettingUseCase: new GetWebSettingUseCase(webSettingRepository),
+  UpdateWebSettingUseCase: new UpdateWebSettingUseCase(webSettingRepository),
+  CreateWebSettingUseCase: new CreateWebSettingUseCase(webSettingRepository),
 };

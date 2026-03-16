@@ -5,9 +5,11 @@ import { Navbar } from '@/src/presentation/components/public/layout/Navbar';
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Navbar />
-      <main>{children}</main>
-      <Footer />
+      <div className='bg-white'>
+        <Navbar />
+        <main>{children}</main>
+        <Footer />
+      </div>
     </>
   );
 }

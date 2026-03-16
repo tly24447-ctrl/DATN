@@ -13,6 +13,41 @@ interface SidebarProps {
   baseUrl: string; // Truyền vào '/shop' hoặc '/shop/search'
 }
 
+interface PriceRange {
+  label: string;
+  min?: number; // Using optional or undefined for 'Any'
+  max?: number;
+  currency?: string; // Optional: if you want to support multiple currencies later
+}
+
+const VND_PRICE_RANGES: PriceRange[] = [
+  { 
+    label: 'Tất cả mức giá', 
+    min: undefined, 
+    max: undefined 
+  },
+  { 
+    label: 'Dưới 500.000₫', 
+    min: 0, 
+    max: 500000 
+  },
+  { 
+    label: '500.000₫ - 1.000.000₫', 
+    min: 500000, 
+    max: 1000000 
+  },
+  { 
+    label: '1.000.000₫ - 2.000.000₫', 
+    min: 1000000, 
+    max: 2000000 
+  },
+  { 
+    label: 'Trên 2.000.000₫', 
+    min: 2000000, 
+    max: Infinity 
+  },
+];
+
 export const ShopSidebar = ({ categories, currentCategory, selectedFormats, minPrice, maxPrice, query }: SidebarProps) => {
   // Logic helper URL (getFormatUrl, getPriceUrl) copy vào đây...
   // Sử dụng baseUrl thay vì fix cứng path
@@ -40,13 +75,6 @@ export const ShopSidebar = ({ categories, currentCategory, selectedFormats, minP
     return `/shop/search?${params.toString()}`;
   };
 
-  const priceRanges = [
-    { label: 'Any Price', min: undefined, max: undefined },
-    { label: 'Under $25', min: 0, max: 25 },
-    { label: '$25 to $50', min: 25, max: 50 },
-    { label: '$50 to $100', min: 50, max: 100 },
-    { label: 'Over $100', min: 100, max: 9999 },
-  ];
   return (
     <aside className="lg:col-span-3 space-y-6">
 
@@ -110,7 +138,7 @@ export const ShopSidebar = ({ categories, currentCategory, selectedFormats, minP
           Price Range
         </div>
         <div className="space-y-1">
-          {priceRanges.map((range) => {
+          {VND_PRICE_RANGES.map((range) => {
             const isActive = minPrice === range.min?.toString() && maxPrice === range.max?.toString();
             return (
               <Link

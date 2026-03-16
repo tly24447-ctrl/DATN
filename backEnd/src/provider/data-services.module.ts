@@ -25,6 +25,12 @@ import {
   VoucherDocument,
   VoucherSchema,
 } from '@/src/data/mongo/model/voucher.model';
+import {
+  WebSettingDocument,
+  WebSettingSchema,
+} from '../data/mongo/model/web-setting.model';
+import { WebSettingRepository } from '../domain/repository/web-setting.repository';
+import { WebSettingRepositoryImpl } from '../data/repository/web-setting.repository.impl';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -33,6 +39,7 @@ import {
       { name: OrderDocument.name, schema: OrderSchema },
       { name: ProductDocument.name, schema: ProductSchema },
       { name: VoucherDocument.name, schema: VoucherSchema },
+      { name: WebSettingDocument.name, schema: WebSettingSchema },
     ]),
   ],
   providers: [
@@ -56,6 +63,10 @@ import {
       provide: VoucherRepository,
       useClass: VoucherRepositoryImpl, // This is the "Adapter"
     },
+    {
+      provide: WebSettingRepository,
+      useClass: WebSettingRepositoryImpl, // This is the "Adapter"
+    },
   ],
   exports: [
     UserRepository,
@@ -63,6 +74,7 @@ import {
     OrderRepository,
     ProductRepository,
     VoucherRepository,
+    WebSettingRepository,
   ],
 })
 export class DataServicesModule {}

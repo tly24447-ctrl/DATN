@@ -1,8 +1,11 @@
 'use client';
 
+import { CategoryEntity } from '@/src/domain/entity/category.entity';
+import { AppProviders } from '@/src/provider/provider';
+import { useWebSettings } from '@/src/presentation/context/WebSettingContext'; // Import context
+import * as Icons from 'lucide-react'; // Import for dynamic icons
 import {
   ArrowRight,
-  BookOpen,
   Facebook,
   Instagram,
   Mail,
@@ -14,23 +17,55 @@ import {
   Twitter
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 const Footer = () => {
+  const [categories, setCategories] = useState<CategoryEntity[]>([]);
+  const { settings } = useWebSettings(); // 1. Access global settings
   const currentYear = new Date().getFullYear();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await AppProviders.GetAllCategoriesUseCase.execute();
+        setCategories(data.slice(0, 5));
+      } catch (error) {
+        console.error("Failed to load categories", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // 2. Resolve dynamic icon for the footer logo
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const FooterIcon = (settings?.headerIcon && (Icons as any)[settings.headerIcon]) 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ? (Icons as any)[settings.headerIcon] 
+    : Icons.BookOpen;
 
   return (
     <footer className="bg-slate-900 text-slate-300 pt-16 pb-8 border-t border-slate-800">
       <div className="container mx-auto px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          
+
           {/* Brand & Mission */}
           <div className="space-y-6">
             <div className="flex items-center gap-2 text-white">
-              <BookOpen className="text-blue-500" size={28} />
-              <span className="text-2xl font-bold tracking-tight">BookHaven</span>
+              {settings?.logoUrl ? (
+                <div className="relative h-7 w-7">
+                   <Image src={settings.logoUrl} alt="Logo" fill className="object-contain" />
+                </div>
+              ) : (
+                <FooterIcon className="text-blue-500" size={28} />
+              )}
+              <span className="text-2xl font-bold tracking-tight">
+                {settings?.webName || "BookHaven"}
+              </span>
             </div>
             <p className="text-sm leading-relaxed text-slate-400">
-              Curating stories that inspire, educate, and transport you. From timeless classics to modern masterpieces, find your next adventure here.
+              {/* 3. Use custom footer text if available */}
+              {settings?.footerText || "Curating stories that inspire, educate, and transport you. From timeless classics to modern masterpieces, find your next adventure here."}
             </p>
             <div className="flex gap-4">
               <Link href="#" className="hover:text-blue-500 transition-colors"><Facebook size={20} /></Link>
@@ -43,11 +78,11 @@ const Footer = () => {
           <div>
             <h4 className="text-white font-bold mb-6 text-lg">Shop Categories</h4>
             <ul className="space-y-4 text-sm">
-              <li><Link href="/categories/fiction" className="hover:text-white transition-colors">Fiction & Literature</Link></li>
-              <li><Link href="/categories/non-fiction" className="hover:text-white transition-colors">Non-Fiction</Link></li>
-              <li><Link href="/categories/science" className="hover:text-white transition-colors">Science & Technology</Link></li>
-              <li><Link href="/categories/kids" className="hover:text-white transition-colors">Children&apos;s Books</Link></li>
-              <li><Link href="/sale" className="text-orange-400 hover:text-orange-300 font-medium">Bestsellers & Deals</Link></li>
+              {categories.map((category, index) => (
+                <li key={`${category._id}_${index}`}>
+                  <Link href={`/shop/search?category=${category._id}`} className="hover:text-white transition-colors">{category.name}</Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -57,7 +92,7 @@ const Footer = () => {
             <ul className="space-y-4 text-sm">
               <li className="flex items-start gap-3">
                 <MapPin className="text-blue-500 shrink-0" size={18} />
-                <span>123 Literary Ave, Suite 456<br />Booktown, NY 10001</span>
+                <span>298 đường Cầu Diễn, phường Tây Tựu,<br />quận Bắc Từ Liêm, TP. Hà Nội</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="text-blue-500 shrink-0" size={18} />
@@ -65,7 +100,8 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="text-blue-500 shrink-0" size={18} />
-                <span>support@bookhaven.com</span>
+                {/* 4. Use custom contact email */}
+                <span>{settings?.contactEmail || "support@bookhaven.com"}</span>
               </li>
             </ul>
           </div>
@@ -75,9 +111,9 @@ const Footer = () => {
             <h4 className="text-white font-bold mb-6 text-lg">Join Our Reader List</h4>
             <p className="text-xs text-slate-500 mb-4 uppercase font-bold tracking-widest">Get 10% off your first order</p>
             <form className="relative">
-              <input 
-                type="email" 
-                placeholder="Your email address" 
+              <input
+                type="email"
+                placeholder="Your email address"
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg py-3 pl-4 pr-12 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
               />
               <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 p-2 rounded-md hover:bg-blue-700 transition-colors">
@@ -87,7 +123,7 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Features Bar */}
+        {/* Features Bar (Kept static as these are core business features) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-8 border-y border-slate-800 mb-8">
           <div className="flex items-center gap-4">
             <Truck className="text-blue-500" size={32} />
@@ -115,7 +151,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-slate-500">
-            &copy; {currentYear} BookHaven. All rights reserved. Built for bibliophiles.
+            &copy; {currentYear} {settings?.webName || "BookHaven"}. All rights reserved. Built for bibliophiles.
           </p>
           <div className="flex gap-6 text-xs text-slate-500">
             <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>

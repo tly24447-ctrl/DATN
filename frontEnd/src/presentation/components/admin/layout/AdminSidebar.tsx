@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   LogOut,
   Package,
+  Settings,
   ShoppingBag,
   Ticket,
   Users
@@ -16,6 +17,7 @@ const AdminSidebar = () => {
     { name: 'Products', icon: <Package size={20} />, path: '/admin/products' },
     { name: 'Orders', icon: <ShoppingBag size={20} />, path: '/admin/orders' },
     { name: 'Vouchers', icon: <Ticket size={20} />, path: '/admin/vouchers' },
+    { name: 'Setting', icon: <Settings size={20} />, path: '/admin/web-setting' },
   ];
 
   return (

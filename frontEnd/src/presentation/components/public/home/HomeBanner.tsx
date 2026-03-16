@@ -38,7 +38,8 @@ const HomeBanner = () => {
                 Shop Now
               </button>
               
-              <button className="flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 px-8 py-4 rounded-xl font-bold hover:bg-slate-50 transition-all active:scale-95">
+              <button className="flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 px-8 py-4 rounded-xl font-bold hover:bg-slate-50 transition-all active:scale-95"
+               onClick={() => router.push("/shop/best-sellers")}>
                 View Best Sellers
                 <ArrowRight size={20} />
               </button>

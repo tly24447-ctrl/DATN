@@ -40,8 +40,28 @@
       }
     },
     {
+      "label": "startMongo",
+      "type": "shell",
+      "command": "& 'C:/Program Files/MongoDB/Server/8.2/bin/mongod.exe' --port 27017 --dbpath 'C:/data/db' --replSet rs0",
+      "options": {
+        "cwd": "${workspaceFolder}/backEnd"
+      },
+      "problemMatcher": {
+        "owner": "custom",
+        "pattern": {
+          "regexp": "^.*"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "starting",
+          "endsPattern": "successfully|listening|started"
+        }
+      }
+    },
+    {
       "label": "start-all",
       "dependsOn": [
+        "startMongo",
         "be",
         "fe"
       ],
@@ -50,7 +70,7 @@
     {
       "label": "Configure Git Global",
       "type": "shell",
-      "command": "git config --global user.name 'NNN'; git config --global user.email ' tly24447@gmail.com'",
+      "command": "git config --global user.name 'NNN'; git config --global user.email 'tly24447@gmail.com'",
       "problemMatcher": [],
       "presentation": {
         "echo": true,
