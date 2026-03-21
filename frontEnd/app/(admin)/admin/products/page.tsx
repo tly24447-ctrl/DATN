@@ -15,7 +15,7 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(Constants.PAGE);
   const [totalPages, setTotalPages] = useState(0);
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductEntity | null>(null);
 
@@ -91,7 +91,7 @@ const Page = () => {
   return (
     <div className="p-8 bg-slate-50 min-h-screen">
       {/* Product Modal */}
-      <ProductModal 
+      <ProductModal
         key={selectedProduct?._id}
         isOpen={isModalOpen}
         initialData={selectedProduct}
@@ -105,9 +105,9 @@ const Page = () => {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <BookCopy className="text-blue-600" size={24} />
-            <h1 className="text-2xl font-bold text-slate-900">Product Management</h1>
+            <h1 className="text-2xl font-bold text-slate-900">Quản lý Sản phẩm</h1>
           </div>
-          <p className="text-sm text-slate-500">Inventory control and book catalog management.</p>
+          <p className="text-sm text-slate-500">Kiểm soát tồn kho và quản lý danh mục sách.</p>
         </div>
 
         <button
@@ -115,7 +115,7 @@ const Page = () => {
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg font-semibold transition-all shadow-sm active:scale-95"
         >
           <Plus size={20} />
-          Add New Book
+          Thêm
         </button>
       </div>
 
@@ -131,7 +131,7 @@ const Page = () => {
             </span>
           </div>
 
-          <ProductTable 
+          <ProductTable
             products={products}
             onEdit={handleEdit}
             onDelete={handleDelete}
@@ -144,7 +144,7 @@ const Page = () => {
               onClick={() => setCurrentPage(prev => prev - 1)}
               className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg disabled:opacity-40 hover:bg-slate-50 transition-colors shadow-sm"
             >
-              Previous
+              Trước
             </button>
             <div className="flex items-center px-4 bg-slate-200/30 rounded-lg text-slate-700 font-medium">
               {currentPage}
@@ -154,7 +154,7 @@ const Page = () => {
               onClick={() => setCurrentPage(prev => prev + 1)}
               className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg disabled:opacity-40 hover:bg-slate-50 transition-colors shadow-sm"
             >
-              Next
+              Sau
             </button>
           </div>
         </>

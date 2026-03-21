@@ -78,7 +78,7 @@ export class PaymentController {
         isCart: false, // Đơn hàng đã thanh toán không còn là giỏ hàng
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this.paymentGateway.server.to(orderId).emit('paymentSuccess', {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         orderId: orderId,

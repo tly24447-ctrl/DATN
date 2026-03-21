@@ -75,12 +75,12 @@ const Page = () => {
   return (
     <div className="p-8 bg-slate-50 min-h-screen">
       {/* Modal - Key ensures state resets every time selectedCategory changes */}
-      <CategoryModal 
+      <CategoryModal
         key={selectedCategory?._id}
-        isOpen={isModalOpen} 
-        initialData={selectedCategory} 
-        onClose={() => setIsModalOpen(false)} 
-        onSave={handleSave} 
+        isOpen={isModalOpen}
+        initialData={selectedCategory}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSave}
       />
 
       {/* Header Section */}
@@ -88,9 +88,9 @@ const Page = () => {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Layers className="text-blue-600" size={24} />
-            <h1 className="text-2xl font-bold text-slate-900">Category Management</h1>
+            <h1 className="text-2xl font-bold text-slate-900">Quản lý Danh mục</h1>
           </div>
-          <p className="text-sm text-slate-500">Organize and manage your product categories.</p>
+          <p className="text-sm text-slate-500">Sắp xếp và quản lý các danh mục sản phẩm của bạn.</p>
         </div>
 
         <button
@@ -98,7 +98,7 @@ const Page = () => {
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg font-semibold transition-all shadow-sm active:scale-95"
         >
           <Plus size={20} />
-          Add Category
+          Thêm
         </button>
       </div>
 
@@ -110,7 +110,7 @@ const Page = () => {
         <>
           <div className="mb-4 flex justify-end">
             <span className="text-xs font-medium text-slate-400 bg-slate-200/50 px-2 py-1 rounded">
-              Page {currentPage} of {totalPages}
+              Trang {currentPage} trong {totalPages}
             </span>
           </div>
 
@@ -127,7 +127,7 @@ const Page = () => {
               onClick={() => setCurrentPage(prev => prev - 1)}
               className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg disabled:opacity-40 hover:bg-slate-50 transition-colors shadow-sm"
             >
-              Previous
+              Trước
             </button>
 
             <div className="flex items-center px-4 bg-slate-200/30 rounded-lg text-slate-700 font-medium">
@@ -139,7 +139,7 @@ const Page = () => {
               onClick={() => setCurrentPage(prev => prev + 1)}
               className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg disabled:opacity-40 hover:bg-slate-50 transition-colors shadow-sm"
             >
-              Next
+              Sau
             </button>
           </div>
         </>

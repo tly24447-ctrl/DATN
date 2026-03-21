@@ -4,19 +4,25 @@ on:
   push:
     branches: [ "main", "master" ]
     paths:
-      - 'backEnd/**'  # Only trigger if changes are in the backEnd folder
-      - '.github/workflows/be.yml'  # Also trigger if the workflow file itself is changed
+      - 'backEnd/**'
+      - '.github/workflows/be.yml'
   pull_request:
     branches: [ "main", "master" ]
     paths:
       - 'backEnd/**'
-      - '.github/workflows/be.yml'  # Also trigger if the workflow file itself is changed
+      - '.github/workflows/be.yml'
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     
-    # This sets the default directory for all 'run' steps
+    # MongoDB Service Container
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
     defaults:
       run:
         working-directory: backEnd
@@ -24,22 +30,30 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Use Node.js 18.x
+    - name: Use Node.js 20.x # Updated to 20 for better NestJS 11 compatibility
       uses: actions/setup-node@v3
       with:
-        node-version: 18.x
+        node-version: 20.x
         cache: 'npm'
-        # Important: Tell the cache to look for package-lock.json inside backEnd
         cache-dependency-path: backEnd/package-lock.json
 
     - name: Install Dependencies
-      run: npm install
+      run: npm ci # Use 'npm ci' for faster, consistent installs in CI
+
+    - name: Lint Code
+      run: npm run lint
 
     - name: Build Project
       run: npm run build
-    #   env:
-    #     MONGO_DB: "mongodb://localhost:27017/test"
-    #     JWT_SECRET: "build_test_secret"
 
     - name: Run Tests
-      run: npm test
+      run: npm run test
+      env:
+        # Pass the MongoDB URI to your NestJS app
+        MONGODB_URI: mongodb://localhost:27017/test
+        NODE_ENV: test
+
+    - name: Run E2E Tests
+      run: npm run test:e2e
+      env:
+        MONGODB_URI: mongodb://localhost:27017/test_e2e

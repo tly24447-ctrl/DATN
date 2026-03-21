@@ -92,7 +92,7 @@ const Page = () => {
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg font-semibold transition-all shadow-sm active:scale-95"
         >
           <Plus size={20} />
-          Add New User
+          Thêm
         </button>
       </div>
 
@@ -121,7 +121,7 @@ const Page = () => {
               onClick={() => setCurrentPage(prev => prev - 1)}
               className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg disabled:opacity-40 hover:bg-slate-50 transition-colors shadow-sm"
             >
-              Previous
+              Trước
             </button>
 
             <div className="flex items-center px-4 bg-slate-200/30 rounded-lg text-slate-700 font-medium">
@@ -133,7 +133,7 @@ const Page = () => {
               onClick={() => setCurrentPage(prev => prev + 1)}
               className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg disabled:opacity-40 hover:bg-slate-50 transition-colors shadow-sm"
             >
-              Next
+              Sau
             </button>
           </div>
         </>

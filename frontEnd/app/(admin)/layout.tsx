@@ -23,7 +23,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (loading || !currUser || !currUser.isAdmin) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-100">
-        <p className="text-slate-500 animate-pulse">Verifying credentials...</p>
+        <p className="text-slate-500 animate-pulse">Đang xác thực thông tin...</p>
       </div>
     );
   }

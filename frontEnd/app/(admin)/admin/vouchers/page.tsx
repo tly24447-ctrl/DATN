@@ -88,9 +88,9 @@ const VoucherPage = () => {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <TicketPercent className="text-blue-600" size={24} />
-            <h1 className="text-2xl font-bold text-slate-900">Voucher Management</h1>
+            <h1 className="text-2xl font-bold text-slate-900">Quản lý Voucher</h1>
           </div>
-          <p className="text-sm text-slate-500">Create and monitor discount codes for your customers.</p>
+          <p className="text-sm text-slate-500">Tạo và theo dõi các mã giảm giá dành cho khách hàng của bạn.</p>
         </div>
 
         <button
@@ -98,7 +98,7 @@ const VoucherPage = () => {
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg font-semibold transition-all shadow-sm active:scale-95"
         >
           <Plus size={20} />
-          Create Voucher
+          Thêm
         </button>
       </div>
 
@@ -127,7 +127,7 @@ const VoucherPage = () => {
               onClick={() => setCurrentPage(prev => prev - 1)}
               className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg disabled:opacity-40 hover:bg-slate-50 transition-colors shadow-sm"
             >
-              Previous
+              Trước
             </button>
             <div className="flex items-center px-4 bg-slate-200/30 rounded-lg text-slate-700 font-medium">
               {currentPage}
@@ -137,7 +137,7 @@ const VoucherPage = () => {
               onClick={() => setCurrentPage(prev => prev + 1)}
               className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg disabled:opacity-40 hover:bg-slate-50 transition-colors shadow-sm"
             >
-              Next
+              Sau
             </button>
           </div>
         </>

@@ -68,7 +68,7 @@ export default function Page() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"
-            placeholder="Email Address"
+            placeholder="Email"
             className="w-full rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -76,7 +76,7 @@ export default function Page() {
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Mật khẩu"
             className="w-full rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -87,7 +87,7 @@ export default function Page() {
             disabled={loading}
             className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:bg-blue-300"
           >
-            {loading ? 'Processing...' : isLogin ? 'Login' : 'Sign Up'}
+            {loading ? 'Đang xử lý...' : isLogin ? 'Đăng nhập' : 'Đăng ký'}
           </button>
         </form>
 
@@ -102,7 +102,7 @@ export default function Page() {
           className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-3 transition hover:bg-gray-50"
         >
           <Image src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width={20} height={20} alt="Google" />
-          Continue with Google
+          Tiếp tục với Google
         </button>
 
         <p className="mt-6 text-center text-sm text-gray-600">
@@ -111,7 +111,7 @@ export default function Page() {
             onClick={() => setIsLogin(!isLogin)}
             className="font-bold text-blue-600 hover:underline"
           >
-            {isLogin ? 'Register now' : 'Log in here'}
+            {isLogin ? 'Đăng ký ngay' : 'Đăng nhập tại đây'}
           </button>
         </p>
       </div>

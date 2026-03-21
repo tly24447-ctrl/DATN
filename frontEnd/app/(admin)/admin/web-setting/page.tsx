@@ -57,18 +57,18 @@ const WebSettingsPage = () => {
       <div className="max-w-4xl mx-auto mb-8">
         <div className="flex items-center gap-2 mb-1">
           <Settings className="text-blue-600" size={24} />
-          <h1 className="text-2xl font-bold text-slate-900">Website Configuration</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Cấu hình Website</h1>
         </div>
         <p className="text-sm text-slate-500">
-          Manage your global branding, contact details, and site-wide status.
+          Quản lý thương hiệu chung, thông tin liên hệ và trạng thái hoạt động của toàn hệ thống.
         </p>
       </div>
 
       <div className="max-w-4xl mx-auto">
-        <WebSettingsForm 
-          initialData={settings} 
-          onSave={handleSave} 
-          isSaving={isSaving} 
+        <WebSettingsForm
+          initialData={settings}
+          onSave={handleSave}
+          isSaving={isSaving}
         />
       </div>
     </div>
