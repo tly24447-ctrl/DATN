@@ -106,11 +106,11 @@ const Page = () => {
       if (result.success) {
         // Handle Redirection (External vs Internal)
         console.log("result", result);
-        if (paymentMethod === PaymentMethod.VNPAY) {
-          if (result.paymentUrl) {
-            window.location.href = result.paymentUrl;
-          }
-        }
+        // if (paymentMethod === PaymentMethod.VNPAY) {
+        //   if (result.paymentUrl) {
+        //     window.location.href = result.paymentUrl;
+        //   }
+        // }
         if (paymentMethod === PaymentMethod.VNQR) {
           console.log("result VNQR", result);
           if (result.qrData) {

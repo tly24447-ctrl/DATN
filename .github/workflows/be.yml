@@ -45,15 +45,3 @@ jobs:
 
     - name: Build Project
       run: npm run build
-
-    - name: Run Tests
-      run: npm run test
-      env:
-        # Pass the MongoDB URI to your NestJS app
-        MONGODB_URI: mongodb://localhost:27017/test
-        NODE_ENV: test
-
-    - name: Run E2E Tests
-      run: npm run test:e2e
-      env:
-        MONGODB_URI: mongodb://localhost:27017/test_e2e

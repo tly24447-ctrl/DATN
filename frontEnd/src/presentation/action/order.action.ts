@@ -34,34 +34,34 @@ export async function createOrderAction(formData: CreateOrderDto) {
     const result = await AppProviders.CreateOrderUseCase.execute(order);
 
     // 4. Handle VnPay Redirection logic
-    if (formData.paymentMethod === PaymentMethod.VNPAY) {
-      try {
-        // 1. Get the use case from your providers
-        const createVnPayUrlUseCase = AppProviders.CreateVnPayUrlUseCase;
+    // if (formData.paymentMethod === PaymentMethod.VNPAY) {
+    //   try {
+    //     // 1. Get the use case from your providers
+    //     const createVnPayUrlUseCase = AppProviders.CreateVnPayUrlUseCase;
 
-        // 2. Execute the use case
-        // Note: In a production server environment, you might need to extract 
-        // the IP from headers (e.g., headers().get('x-forwarded-for'))
-        const paymentUrl = await createVnPayUrlUseCase.execute({
-          orderId: result._id || '',
-          amount: order.totalPrice, // or formData.totalPrice
-          ipAddress: '127.0.0.1',     // Replace with actual client IP
-        });
-        console.log("paymentUrl", paymentUrl);
-        // 3. Return the URL so the frontend can redirect the user
-        return {
-          success: true,
-          orderId: result._id,
-          paymentUrl: paymentUrl
-        };
-      } catch (error) {
-        console.error('VnPay URL Generation Error:', error);
-        return {
-          success: false,
-          message: "Failed to initialize VnPay payment."
-        };
-      }
-    }
+    //     // 2. Execute the use case
+    //     // Note: In a production server environment, you might need to extract 
+    //     // the IP from headers (e.g., headers().get('x-forwarded-for'))
+    //     const paymentUrl = await createVnPayUrlUseCase.execute({
+    //       orderId: result._id || '',
+    //       amount: order.totalPrice, // or formData.totalPrice
+    //       ipAddress: '127.0.0.1',     // Replace with actual client IP
+    //     });
+    //     console.log("paymentUrl", paymentUrl);
+    //     // 3. Return the URL so the frontend can redirect the user
+    //     return {
+    //       success: true,
+    //       orderId: result._id,
+    //       paymentUrl: paymentUrl
+    //     };
+    //   } catch (error) {
+    //     console.error('VnPay URL Generation Error:', error);
+    //     return {
+    //       success: false,
+    //       message: "Failed to initialize VnPay payment."
+    //     };
+    //   }
+    // }
 
     if (formData.paymentMethod === PaymentMethod.VNQR) {
       try {
