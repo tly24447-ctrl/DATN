@@ -2,9 +2,10 @@
 
 import React from 'react';
 import { ProductEntity } from '@/src/domain/entity/product.entity';
-import ProductCard from './ProductCard'; // Assuming the previous component is in the same folder
+import ProductCard from './ProductCard';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslation } from '@/src/presentation/context/LanguageContext';
 
 interface ProductSectionProps {
   title: string;
@@ -19,10 +20,12 @@ const ProductSection: React.FC<ProductSectionProps> = ({
   products,
   viewAllHref
 }) => {
+  const { t } = useTranslation();
+
   const handleAddToCart = () => {
     console.log("Added to cart!");
-    // In the future, call your useCart() hook here
   };
+
   return (
     <section className="py-12 px-8 bg-white">
       <div className="container mx-auto">
@@ -32,7 +35,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-blue-600 font-bold text-xs uppercase tracking-[0.2em]">
               <Sparkles size={14} />
-              Curated Collection
+              {t.home.curatedCollection}
             </div>
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">
               {title}
@@ -48,7 +51,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({
             href={viewAllHref}
             className="hidden sm:flex items-center gap-2 text-sm font-bold text-slate-900 hover:text-blue-600 transition-colors group"
           >
-            View All
+            {t.home.viewAll}
             <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
@@ -57,9 +60,8 @@ const ProductSection: React.FC<ProductSectionProps> = ({
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {products.slice(0, 5).map((product, index) => (
             <ProductCard
-              key={product._id || `product-${index}`}
+              key={product._id + `product-${index}`}
               product={product}
-              // Pass the internal handler, not one from props
               onAddToCart={handleAddToCart}
             />
           ))}
@@ -71,7 +73,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({
             href={viewAllHref}
             className="flex items-center justify-center gap-2 w-full py-4 border border-slate-200 rounded-xl font-bold text-slate-700"
           >
-            View All Products
+            {t.home.viewAllProducts}
             <ArrowRight size={18} />
           </Link>
         </div>

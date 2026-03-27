@@ -6,6 +6,7 @@ import { ShoppingCart, Star, Heart, Bookmark } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/src/presentation/context/CartContext';
+import { useTranslation } from '@/src/presentation/context/LanguageContext'; // Added
 
 interface ProductCardProps {
   product: ProductEntity;
@@ -14,11 +15,20 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
   const { addToCart } = useCart();
+  const { t, language } = useTranslation(); // Use translation hook
+  
   // Calculate discounted price
   const hasDiscount = product.discount && product.discount > 0;
   const discountedPrice = hasDiscount 
     ? product.price * (1 - product.discount! / 100) 
     : product.price;
+
+  // Format currency based on locale
+  const formatPrice = (price: number) => {
+    return language === 'vi' 
+      ? `${price.toLocaleString('vi-VN')}₫` 
+      : `$${(price / 25000).toFixed(2)}`; // Example conversion if needed, or just locale string
+  };
 
   return (
     <div className="group relative bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
@@ -32,7 +42,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         )}
         {product.countInStock === 0 && (
           <span className="bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded-md">
-            OUT OF STOCK
+            {t.product.outOfStock}
           </span>
         )}
       </div>
@@ -63,13 +73,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         <div className="flex justify-between items-start gap-2">
           <div>
             <p className="text-[10px] text-blue-600 font-bold uppercase tracking-wider">
-              {product.format || 'Paperback'}
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {product.format ? (t.product as any)[product.format.toLowerCase()] : t.product.paperback}
             </p>
             <h3 className="text-sm font-bold text-slate-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
               {product.name}
             </h3>
             <p className="text-xs text-slate-500 italic line-clamp-1">
-              by {product.author}
+              {t.product.byAuthor} {product.author}
             </p>
           </div>
         </div>
@@ -81,7 +92,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
             <span className="text-xs font-bold">{product.rating?.average || 0}</span>
           </div>
           <span className="text-[10px] text-slate-400 font-medium">
-            {product.selled || 0} sold
+            {product.selled || 0} {t.product.sold}
           </span>
         </div>
 
@@ -90,11 +101,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
           <div className="flex flex-col">
             {hasDiscount && (
               <span className="text-[10px] text-slate-400 line-through">
-                {product.price.toLocaleString('vi-VN')}₫
+                {formatPrice(product.price)}
               </span>
             )}
             <span className="text-lg font-black text-slate-900">
-              {discountedPrice.toLocaleString('vi-VN')}₫
+              {formatPrice(discountedPrice)}
             </span>
           </div>
 

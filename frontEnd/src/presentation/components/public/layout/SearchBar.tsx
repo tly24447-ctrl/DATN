@@ -1,21 +1,27 @@
-// src/presentation/components/public/layout/SearchBar.tsx
 "use client";
 
 import { Search } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, KeyboardEvent } from "react";
+import { useState, KeyboardEvent, useEffect } from "react";
+import { useTranslation } from "@/src/presentation/context/LanguageContext";
 
 export default function SearchBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useTranslation();
   
-  // Lấy giá trị q hiện tại từ URL nếu có
+  // Update local state if URL param changes (e.g., when navigating back/forward)
   const [query, setQuery] = useState(searchParams.get("q") || "");
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setQuery(searchParams.get("q") || "");
+  }, [searchParams]);
+
   const handleSearch = () => {
-    if (query.trim()) {
-      // Điều hướng sang trang search kèm param q
-      router.push(`/shop/search?q=${encodeURIComponent(query.trim())}`);
+    const trimmedQuery = query.trim();
+    if (trimmedQuery) {
+      router.push(`/shop/search?q=${encodeURIComponent(trimmedQuery)}`);
     } else {
       router.push(`/shop/search`);
     }
@@ -35,7 +41,7 @@ export default function SearchBar() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="Search by title, author..."
+          placeholder={t.common.searchPlaceholder}
           className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 pl-10 pr-4 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all text-sm outline-none"
         />
         <Search 

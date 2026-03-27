@@ -1,8 +1,9 @@
 "use client";
 
 import { RatingInfo } from "@/src/domain/entity/product.entity";
+import { useTranslation } from "@/src/presentation/context/LanguageContext";
 import { AppProviders } from "@/src/provider/provider";
-import { Loader2, Star } from "lucide-react"; // Thêm icon reset nếu cần
+import { Loader2, Star } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -13,11 +14,11 @@ interface RatingEditorProps {
 }
 
 export default function RatingEditor({ productId, initialRating, currentUserId }: RatingEditorProps) {
+  const { t } = useTranslation(); // Lấy hàm translate
   const [ratingData, setRatingData] = useState<RatingInfo>(initialRating);
   const [hover, setHover] = useState(0);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // Lấy đánh giá cũ của user (nếu có)
   const existingDetail = ratingData.details?.find((d) => d.userId === currentUserId);
   const hasVoted = !!existingDetail;
   const userScore = existingDetail?.score || 0;
@@ -30,15 +31,11 @@ export default function RatingEditor({ productId, initialRating, currentUserId }
       let newCount = ratingData.count || 0;
       let newDetails = [...(ratingData.details || [])];
 
-      // LOGIC CẬP NHẬT:
       if (hasVoted) {
-        // Trường hợp vote lại: thay thế score trong detail cũ
         newDetails = newDetails.map((d) =>
           d.userId === currentUserId ? { ...d, score: newScore, createdAt: new Date() } : d
         );
-        // Count giữ nguyên, average tính lại dựa trên sự chênh lệch điểm
       } else {
-        // Trường hợp vote mới
         newCount += 1;
         newDetails.push({
           userId: currentUserId,
@@ -47,7 +44,6 @@ export default function RatingEditor({ productId, initialRating, currentUserId }
         });
       }
 
-      // Tính lại Average chính xác
       const totalScore = newDetails.reduce((sum, item) => sum + item.score, 0);
       const newAverage = totalScore / newCount;
 
@@ -63,11 +59,13 @@ export default function RatingEditor({ productId, initialRating, currentUserId }
 
       if (updatedProduct) {
         setRatingData(updatedProduct.rating || { average: 0, count: 0, details: [] });
-        toast.success(hasVoted ? "Đã cập nhật đánh giá của bạn!" : "Cảm ơn bạn đã đánh giá!");
+        // Sử dụng đa ngôn ngữ cho toast
+        toast.success(hasVoted ? t.details.ratingUpdated : t.details.ratingSuccess);
       }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error(error.message || "Không thể cập nhật đánh giá");
+      console.error(error);
+      toast.error(t.details.ratingFailed);
     } finally {
       setIsUpdating(false);
     }
@@ -79,7 +77,6 @@ export default function RatingEditor({ productId, initialRating, currentUserId }
         <div className="flex items-center gap-0.5 text-amber-500">
           {[...Array(5)].map((_, i) => {
             const starValue = i + 1;
-            // Hiển thị: Ưu tiên Hover -> Nếu đã vote thì hiện vote cũ -> Nếu chưa hiện trung bình
             const displayValue = hover || (hasVoted ? userScore : ratingData.average);
             const isActive = starValue <= (displayValue || 0);
 
@@ -122,7 +119,8 @@ export default function RatingEditor({ productId, initialRating, currentUserId }
       {hasVoted && !isUpdating && (
         <div className="flex items-center gap-1 ml-0.5">
           <span className="text-[10px] text-blue-600 font-semibold">
-            Bạn đã chấm {userScore} sao. Click để đổi?
+            {/* Nội dung kết hợp biến số */}
+            {t.details.userVotedPrefix} {userScore} {t.details.userVotedSuffix}
           </span>
         </div>
       )}

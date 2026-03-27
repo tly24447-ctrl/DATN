@@ -4,6 +4,7 @@ import { ProductEntity, RatingInfo } from '@/src/domain/entity/product.entity';
 import { useCart } from '@/src/presentation/context/CartContext';
 import { useAuth } from '@/src/presentation/hooks/useAuth';
 import { AppProviders } from '@/src/provider/provider';
+import { useTranslation } from '@/src/presentation/context/LanguageContext'; // Added
 import {
   BookOpen,
   Building2,
@@ -18,7 +19,7 @@ import {
   Plus,
   ShieldCheck,
   ShoppingCart,
-  Star, // Import Star để render rating của từng user
+  Star,
   Truck
 } from 'lucide-react';
 import Image from 'next/image';
@@ -35,12 +36,19 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   const [isAdded, setIsAdded] = useState(false);
   const { addToCart } = useCart();
   const { currUser } = useAuth();
+  const { t, language } = useTranslation(); // Use translation hook
   const [isUpdating, setIsUpdating] = useState(false);
 
   const hasDiscount = product.discount && product.discount > 0;
   const discountedPrice = hasDiscount
     ? product.price * (1 - product.discount! / 100)
     : product.price;
+
+  const formatPrice = (price: number) => {
+    return language === 'vi' 
+      ? `${price.toLocaleString('vi-VN')}₫` 
+      : `$${(price / 25000).toFixed(2)}`;
+  };
 
   const handleQuantity = (type: 'inc' | 'dec') => {
     if (type === 'inc' && quantity < product.countInStock) setQuantity(q => q + 1);
@@ -121,27 +129,20 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
       <div className="container mx-auto px-4 md:px-8 pt-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
 
-          {/* Left Column: Image (Sticky) */}
+          {/* Left Column: Image */}
           <div className="lg:col-span-5">
             <div className="lg:sticky lg:top-24">
               <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-50">
                 {product.image ? (
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                    priority
-                  />
+                  <Image src={product.image} alt={product.name} fill className="object-cover" priority />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center text-slate-300">
                     <BookOpen size={80} />
                   </div>
                 )}
-
                 {hasDiscount && (
                   <div className="absolute top-6 left-6 bg-orange-500 text-white font-black px-4 py-2 rounded-lg shadow-lg">
-                    SAVE {product.discount}%
+                    {t.details.save} {product.discount}%
                   </div>
                 )}
               </div>
@@ -152,13 +153,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
           <div className="lg:col-span-7 space-y-8">
             <div className="space-y-4">
               <nav className="flex text-xs font-bold text-blue-600 uppercase tracking-widest gap-2">
-                <span>Shop</span> / <span>{product.format || 'Books'}</span>
+                <span>{t.details.shop}</span> / <span>{product.format || t.details.books}</span>
               </nav>
               <h1 className="text-4xl md:text-5xl font-black text-slate-900 leading-tight">
                 {product.name}
               </h1>
               <div className="flex flex-wrap items-center gap-6">
-                <p className="text-xl text-slate-500 italic">by <span className="text-slate-900 font-semibold not-italic">{product.author}</span></p>
+                <p className="text-xl text-slate-500 italic">
+                  {t.product.byAuthor} <span className="text-slate-900 font-semibold not-italic">{product.author}</span>
+                </p>
                 <RatingEditor
                   productId={product._id || ''}
                   initialRating={product.rating || { average: 0, count: 0, details: [] }}
@@ -171,47 +174,41 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
               <div>
                 {hasDiscount && (
                   <span className="text-lg text-slate-400 line-through font-medium block">
-                    ${product.price.toLocaleString()}
+                    {formatPrice(product.price)}
                   </span>
                 )}
                 <span className="text-4xl font-black text-slate-900">
-                  ${discountedPrice.toLocaleString()}
+                  {formatPrice(discountedPrice)}
                 </span>
               </div>
               <div className="mb-1">
                 {product.countInStock > 0 ? (
                   <span className="text-xs font-bold px-3 py-1 bg-green-100 text-green-700 rounded-full">
-                    IN STOCK ({product.countInStock} copies left)
+                    {t.details.inStock} ({product.countInStock} {t.details.copiesLeft})
                   </span>
                 ) : (
                   <span className="text-xs font-bold px-3 py-1 bg-red-100 text-red-700 rounded-full">
-                    OUT OF STOCK
+                    {t.details.outOfStock}
                   </span>
                 )}
               </div>
             </div>
 
             <div className="space-y-3">
-              <h3 className="text-lg font-bold text-slate-900">Description</h3>
+              <h3 className="text-lg font-bold text-slate-900">{t.details.description}</h3>
               <p className="text-slate-600 leading-relaxed">
-                {product.description || "No description available for this title."}
+                {product.description || t.details.noDescription}
               </p>
             </div>
 
             {/* Add to Cart Actions */}
             <div className="flex flex-col sm:flex-row gap-4 items-center pt-4">
               <div className="flex items-center border-2 border-slate-200 rounded-xl overflow-hidden bg-white">
-                <button
-                  onClick={() => handleQuantity('dec')}
-                  className="p-4 hover:bg-slate-50 transition-colors"
-                >
+                <button onClick={() => handleQuantity('dec')} className="p-4 hover:bg-slate-50 transition-colors">
                   <Minus size={20} />
                 </button>
                 <span className="w-12 text-center font-bold text-lg">{quantity}</span>
-                <button
-                  onClick={() => handleQuantity('inc')}
-                  className="p-4 hover:bg-slate-50 transition-colors"
-                >
+                <button onClick={() => handleQuantity('inc')} className="p-4 hover:bg-slate-50 transition-colors">
                   <Plus size={20} />
                 </button>
               </div>
@@ -227,12 +224,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
                 {isAdded ? (
                   <>
                     <CheckCircle2 size={22} />
-                    Added to Cart!
+                    {t.details.addedToCart}
                   </>
                 ) : (
                   <>
                     <ShoppingCart size={22} />
-                    Add to Cart — ${(discountedPrice * quantity).toLocaleString()}
+                    {t.details.addToCart} — {formatPrice(discountedPrice * quantity)}
                   </>
                 )}
               </button>
@@ -247,14 +244,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
               <div className="flex items-start gap-3">
                 <Building2 className="text-slate-400" size={20} />
                 <div>
-                  <p className="text-[10px] uppercase font-bold text-slate-400">Publisher</p>
+                  <p className="text-[10px] uppercase font-bold text-slate-400">{t.details.publisher}</p>
                   <p className="text-sm font-semibold text-slate-700">{product.publisher || 'N/A'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <CalendarDays className="text-slate-400" size={20} />
                 <div>
-                  <p className="text-[10px] uppercase font-bold text-slate-400">Published</p>
+                  <p className="text-[10px] uppercase font-bold text-slate-400">{t.details.published}</p>
                   <p className="text-sm font-semibold text-slate-700">
                     {product.publicationDate ? new Date(product.publicationDate).getFullYear() : 'N/A'}
                   </p>
@@ -270,22 +267,22 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
               <div className="flex items-start gap-3">
                 <Layers className="text-slate-400" size={20} />
                 <div>
-                  <p className="text-[10px] uppercase font-bold text-slate-400">Pages</p>
+                  <p className="text-[10px] uppercase font-bold text-slate-400">{t.details.pages}</p>
                   <p className="text-sm font-semibold text-slate-700">{product.pageCount || 'N/A'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Globe className="text-slate-400" size={20} />
                 <div>
-                  <p className="text-[10px] uppercase font-bold text-slate-400">Language</p>
+                  <p className="text-[10px] uppercase font-bold text-slate-400">{t.details.language}</p>
                   <p className="text-sm font-semibold text-slate-700">{product.language || 'English'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <ShieldCheck className="text-slate-400" size={20} />
                 <div>
-                  <p className="text-[10px] uppercase font-bold text-slate-400">Authenticity</p>
-                  <p className="text-sm font-semibold text-slate-700">100% Genuine</p>
+                  <p className="text-[10px] uppercase font-bold text-slate-400">{t.details.authenticity}</p>
+                  <p className="text-sm font-semibold text-slate-700">{t.details.genuine}</p>
                 </div>
               </div>
             </div>
@@ -293,7 +290,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
             <div className="bg-blue-50/50 rounded-2xl p-4 flex gap-4 items-center text-blue-800">
               <Truck size={24} className="text-blue-500" />
               <div className="text-sm">
-                <span className="font-bold">Fast Delivery Available.</span> Orders placed before 2 PM ship the same day.
+                <span className="font-bold">{t.details.fastDelivery}</span> {t.details.deliverySub}
               </div>
             </div>
 
@@ -301,107 +298,78 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
             <div className="pt-12 border-t border-slate-100">
               <div className="flex items-center gap-2 mb-8">
                 <MessageSquare className="text-slate-900" size={24} />
-                <h3 className="text-2xl font-black text-slate-900">Customer Reviews</h3>
+                <h3 className="text-2xl font-black text-slate-900">{t.details.reviews}</h3>
                 <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-sm font-bold">
                   {product.rating?.count || 0}
                 </span>
               </div>
 
-              {/* --- NEW: Input Section for Current User --- */}
               {currUser && (
                 <div className="mb-10 bg-slate-50 rounded-2xl p-6 border border-slate-200">
                   <h4 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
                     <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                     {product.rating?.details.some(d => d.userId === currUser._id)
-                      ? "Update your review"
-                      : "Write a review"}
+                      ? t.details.updateReview
+                      : t.details.writeReview}
                   </h4>
                   <div className="space-y-4">
                     <textarea
                       rows={3}
-                      placeholder="Share your thoughts about this book..."
-                      className="w-full p-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm transition-all resize-none"
+                      placeholder={t.details.reviewPlaceholder}
+                      className="w-full p-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all resize-none"
                       defaultValue={product.rating?.details.find(d => d.userId === currUser._id)?.comment || ""}
                       onBlur={async (e) => {
                         const newComment = e.target.value;
                         const existingRating = product.rating?.details.find(d => d.userId === currUser._id);
-
-                        // Chỉ update nếu đã có rating (score) từ trước hoặc user vừa nhập text
-                        if (existingRating || newComment) {
-                          try {
-                            updateComment(newComment);
-                            console.log("Saving comment:", newComment);
-                          } catch (err) {
-                            console.error("Failed to save comment", err);
-                          }
-                        }
+                        if (existingRating || newComment) updateComment(newComment);
                       }}
                     />
                     <p className="text-[11px] text-slate-400 italic">
-                      * Your comment will be saved automatically when you click outside the box.
+                      {t.details.reviewAutoSave}
                     </p>
                   </div>
                 </div>
               )}
 
-              {/* --- Reviews List --- */}
               <div className="space-y-6">
                 {product.rating?.details && product.rating.details.length > 0 ? (
                   product.rating.details.map((review, idx) => {
                     const isOwnReview = currUser && review.userId === currUser._id;
-
                     return (
-                      <div
-                        key={idx}
-                        className={`bg-white border rounded-2xl p-6 shadow-sm transition-all ${isOwnReview ? "border-blue-200 ring-1 ring-blue-50" : "border-slate-100"
-                          }`}
-                      >
+                      <div key={idx} className={`bg-white border rounded-2xl p-6 shadow-sm transition-all ${isOwnReview ? "border-blue-200 ring-1 ring-blue-50" : "border-slate-100"}`}>
                         <div className="flex items-center gap-3 mb-4">
-                          <div className={`w-10 h-10 flex items-center justify-center rounded-full font-bold overflow-hidden border-2 border-white shadow-sm ${isOwnReview ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-600"
-                            }`}>
+                          <div className={`w-10 h-10 flex items-center justify-center rounded-full font-bold border-2 border-white shadow-sm ${isOwnReview ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-600"}`}>
                             {review.userId.substring(0, 2).toUpperCase()}
                           </div>
                           <div className="flex-1">
                             <p className="text-sm font-black text-slate-900 leading-none mb-1">
-                              {isOwnReview ? "Your Review" : `User_${review.userId.substring(review.userId.length - 4)}`}
+                              {isOwnReview ? t.details.yourReview : `User_${review.userId.substring(review.userId.length - 4)}`}
                             </p>
                             <div className="flex text-amber-400">
                               {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  size={14}
-                                  fill={i < review.score ? "currentColor" : "none"}
-                                  className={i < review.score ? "" : "text-slate-200"}
-                                />
+                                <Star key={i} size={14} fill={i < review.score ? "currentColor" : "none"} className={i < review.score ? "" : "text-slate-200"} />
                               ))}
                             </div>
                           </div>
                           <span className="text-[11px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded">
-                            {new Date(review.createdAt).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric'
+                            {new Date(review.createdAt).toLocaleDateString(language === 'vi' ? 'vi-VN' : 'en-US', {
+                              year: 'numeric', month: 'short', day: 'numeric'
                             })}
                           </span>
                         </div>
-
                         <p className="text-slate-600 text-sm leading-relaxed pl-1">
-                          {review.comment || (
-                            <span className="italic text-slate-400">No written comment provided.</span>
-                          )}
+                          {review.comment || <span className="italic text-slate-400">{t.details.noComment}</span>}
                         </p>
                       </div>
                     );
                   })
                 ) : (
                   <div className="text-center py-12 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
-                    <p className="text-slate-400 font-medium italic">No reviews yet. Be the first to rate this book!</p>
+                    <p className="text-slate-400 font-medium italic">{t.details.noReviewsYet} {t.details.beFirst}</p>
                   </div>
                 )}
               </div>
             </div>
-            {/* --- END REVIEWS SECTION --- */}
-
           </div>
         </div>
       </div>

@@ -5,23 +5,33 @@ import { CategoryEntity } from '@/src/domain/entity/category.entity';
 import { ArrowRight, Book } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslation } from '@/src/presentation/context/LanguageContext';
 
 interface CategoryCircleProps {
   categories: CategoryEntity[];
 }
 
 const CategoryCircles: React.FC<CategoryCircleProps> = ({ categories }) => {
+  const { t } = useTranslation();
+
   return (
     <section className="py-12 bg-white">
       <div className="container mx-auto px-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-10">
           <div>
-            <h2 className="text-2xl font-black text-slate-900">Explore by Genre</h2>
-            <p className="text-sm text-slate-500">Find exactly what you&apos;re looking for</p>
+            <h2 className="text-2xl font-black text-slate-900">
+              {t.genres.title}
+            </h2>
+            <p className="text-sm text-slate-500">
+              {t.genres.subtitle}
+            </p>
           </div>
-          <Link href="/categories" className="text-sm font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 group">
-            All Genres
+          <Link 
+            href="/categories" 
+            className="text-sm font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 group"
+          >
+            {t.genres.allGenres}
             <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
           </Link>
         </div>

@@ -2,8 +2,9 @@
 
 import { CategoryEntity } from '@/src/domain/entity/category.entity';
 import { AppProviders } from '@/src/provider/provider';
-import { useWebSettings } from '@/src/presentation/context/WebSettingContext'; // Import context
-import * as Icons from 'lucide-react'; // Import for dynamic icons
+import { useWebSettings } from '@/src/presentation/context/WebSettingContext';
+import { useTranslation } from '@/src/presentation/context/LanguageContext'; // Added
+import * as Icons from 'lucide-react';
 import {
   ArrowRight,
   Facebook,
@@ -22,7 +23,8 @@ import { useEffect, useState } from 'react';
 
 const Footer = () => {
   const [categories, setCategories] = useState<CategoryEntity[]>([]);
-  const { settings } = useWebSettings(); // 1. Access global settings
+  const { settings } = useWebSettings();
+  const { t } = useTranslation(); // Use translation hook
   const currentYear = new Date().getFullYear();
 
   useEffect(() => {
@@ -37,7 +39,7 @@ const Footer = () => {
     fetchCategories();
   }, []);
 
-  // 2. Resolve dynamic icon for the footer logo
+  // Resolve dynamic icon
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const FooterIcon = (settings?.headerIcon && (Icons as any)[settings.headerIcon]) 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,8 +66,7 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-sm leading-relaxed text-slate-400">
-              {/* 3. Use custom footer text if available */}
-              {settings?.footerText || "Curating stories that inspire, educate, and transport you. From timeless classics to modern masterpieces, find your next adventure here."}
+              {settings?.footerText || t.footer.defaultMission}
             </p>
             <div className="flex gap-4">
               <Link href="#" className="hover:text-blue-500 transition-colors"><Facebook size={20} /></Link>
@@ -76,7 +77,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white font-bold mb-6 text-lg">Shop Categories</h4>
+            <h4 className="text-white font-bold mb-6 text-lg">{t.footer.categoriesTitle}</h4>
             <ul className="space-y-4 text-sm">
               {categories.map((category, index) => (
                 <li key={`${category._id}_${index}`}>
@@ -88,11 +89,11 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-white font-bold mb-6 text-lg">Customer Support</h4>
+            <h4 className="text-white font-bold mb-6 text-lg">{t.footer.supportTitle}</h4>
             <ul className="space-y-4 text-sm">
               <li className="flex items-start gap-3">
                 <MapPin className="text-blue-500 shrink-0" size={18} />
-                <span>298 đường Cầu Diễn, phường Tây Tựu,<br />quận Bắc Từ Liêm, TP. Hà Nội</span>
+                <span>{t.footer.address}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="text-blue-500 shrink-0" size={18} />
@@ -100,7 +101,6 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="text-blue-500 shrink-0" size={18} />
-                {/* 4. Use custom contact email */}
                 <span>{settings?.contactEmail || "support@bookhaven.com"}</span>
               </li>
             </ul>
@@ -108,12 +108,12 @@ const Footer = () => {
 
           {/* Newsletter */}
           <div>
-            <h4 className="text-white font-bold mb-6 text-lg">Join Our Reader List</h4>
-            <p className="text-xs text-slate-500 mb-4 uppercase font-bold tracking-widest">Get 10% off your first order</p>
+            <h4 className="text-white font-bold mb-6 text-lg">{t.footer.newsletterTitle}</h4>
+            <p className="text-xs text-slate-500 mb-4 uppercase font-bold tracking-widest">{t.footer.newsletterSub}</p>
             <form className="relative">
               <input
                 type="email"
-                placeholder="Your email address"
+                placeholder={t.footer.newsletterPlaceholder}
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg py-3 pl-4 pr-12 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
               />
               <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 p-2 rounded-md hover:bg-blue-700 transition-colors">
@@ -123,27 +123,27 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Features Bar (Kept static as these are core business features) */}
+        {/* Features Bar */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-8 border-y border-slate-800 mb-8">
           <div className="flex items-center gap-4">
             <Truck className="text-blue-500" size={32} />
             <div>
-              <p className="text-white font-semibold text-sm">Free Shipping</p>
-              <p className="text-xs text-slate-500">On all orders over $50</p>
+              <p className="text-white font-semibold text-sm">{t.footer.freeShipping}</p>
+              <p className="text-xs text-slate-500">{t.footer.freeShippingSub}</p>
             </div>
           </div>
           <div className="flex items-center gap-4 border-slate-800 md:border-x px-0 md:px-8">
             <ShieldCheck className="text-blue-500" size={32} />
             <div>
-              <p className="text-white font-semibold text-sm">Secure Payment</p>
-              <p className="text-xs text-slate-500">100% protected transactions</p>
+              <p className="text-white font-semibold text-sm">{t.footer.securePayment}</p>
+              <p className="text-xs text-slate-500">{t.footer.securePaymentSub}</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <Package className="text-blue-500" size={32} />
             <div>
-              <p className="text-white font-semibold text-sm">Easy Returns</p>
-              <p className="text-xs text-slate-500">30-day money-back guarantee</p>
+              <p className="text-white font-semibold text-sm">{t.footer.easyReturns}</p>
+              <p className="text-xs text-slate-500">{t.footer.easyReturnsSub}</p>
             </div>
           </div>
         </div>
@@ -151,12 +151,12 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-slate-500">
-            &copy; {currentYear} {settings?.webName || "BookHaven"}. All rights reserved. Built for bibliophiles.
+            &copy; {currentYear} {settings?.webName || "BookHaven"}. {t.footer.rightsReserved}
           </p>
           <div className="flex gap-6 text-xs text-slate-500">
-            <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
-            <Link href="#" className="hover:text-white transition-colors">Shipping Policy</Link>
+            <Link href="#" className="hover:text-white transition-colors">{t.footer.privacyPolicy}</Link>
+            <Link href="#" className="hover:text-white transition-colors">{t.footer.termsOfService}</Link>
+            <Link href="#" className="hover:text-white transition-colors">{t.footer.shippingPolicy}</Link>
           </div>
         </div>
       </div>
