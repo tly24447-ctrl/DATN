@@ -61,7 +61,6 @@
     {
       "label": "start-all",
       "dependsOn": [
-        "startMongo",
         "be",
         "fe"
       ],

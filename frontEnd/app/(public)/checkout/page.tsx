@@ -120,7 +120,10 @@ const Page = () => {
             removeVoucher();
             return;
           }
+        } else {
+          router.push(`/checkout/order-success?id=${result.orderId}`);
         }
+
         console.log("result isVnQr", isVnQr);
         clearCart();
         removeVoucher();

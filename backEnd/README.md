@@ -34,6 +34,15 @@ $ npm install
 ## Compile and run the project
 
 ```bash
+# Tắt Service chính thức của Windows
+Stop-Service -Name "MongoDB" -ErrorAction SilentlyContinue
+
+# Tắt mọi tiến trình mongod đang chạy mồ côi
+Get-Process mongod -ErrorAction SilentlyContinue | Stop-Process -Force
+
+# Xóa file lock để đảm bảo không bị kẹt khởi động
+Remove-Item "C:\data\db\mongod.lock" -ErrorAction SilentlyContinue
+
 & "C:\Program Files\MongoDB\Server\8.2\bin\mongod.exe" --port 27017 --dbpath "C:\data\db" --replSet rs0
 
 mongosh
