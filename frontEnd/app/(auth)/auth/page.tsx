@@ -28,17 +28,24 @@ export default function Page() {
     setLoading(true);
     setError(null);
 
-    const user = isLogin
-      ? await AuthService.loginWithEmail(email, password)
-      : await AuthService.signUpWithEmail(email, password);
+    try {
+      const user = isLogin
+        ? await AuthService.loginWithEmail(email, password)
+        : await AuthService.signUpWithEmail(email, password);
 
-    setLoading(false);
-    console.log("user", user);
-    if (user) {
-      console.log("push");
-      router.push('/');
-    } else {
+      if (!user) throw new Error("No user returned");
+
+      // Logic for successful auth
+      if (isLogin) {
+        router.push('/');
+      } else {
+        setIsLogin(true);
+      }
+    } catch (e) {
+      console.error('auth', e);
       setError("Authentication failed. Please check your credentials.");
+    } finally {
+      setLoading(false);
     }
   };
 
