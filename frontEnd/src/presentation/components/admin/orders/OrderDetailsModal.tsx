@@ -56,7 +56,12 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
               <div className="flex items-center gap-2 text-green-600 mb-2 font-semibold text-sm">
                 <CreditCard size={16} /> Payment Status
               </div>
-              {order.isPaid ? (
+              {order.isCancelled ? (
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded-full uppercase">Cancelled</span>
+                  <p className="text-[10px] text-slate-500 italic">This order has been cancelled, payment is no longer required.</p>
+                </div>
+              ) : order.isPaid ? (
                 <div className="space-y-1.5">
                   <span className="text-[10px] font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-full uppercase">Paid</span>
                   <div className="space-y-0.5">
@@ -77,12 +82,16 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 </div>
               )}
             </div>
-
             <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/30">
               <div className="flex items-center gap-2 text-purple-600 mb-2 font-semibold text-sm">
                 <Truck size={16} /> Delivery Status
               </div>
-              {order.isDelivered ? (
+              {order.isCancelled ? (
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded-full uppercase">Cancelled</span>
+                  <p className="text-[10px] text-slate-500 italic">Delivery has been stopped because the order was cancelled.</p>
+                </div>
+              ) : order.isDelivered ? (
                 <div className="space-y-1">
                   <span className="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full uppercase">Delivered</span>
                   <p className="text-[10px] text-slate-500">{order.deliveredAt ? new Date(order.deliveredAt).toLocaleString() : ''}</p>

@@ -71,7 +71,7 @@ const Page = () => {
       if (result.success) {
         applyVoucher(result.voucher);
         setVoucherCode(''); // Clear input on success
-        console.log("Voucher applied successfully!");
+        console.log("Voucher applied successfully!", result);
       } else {
         setError(result.message || "Invalid code");
       }

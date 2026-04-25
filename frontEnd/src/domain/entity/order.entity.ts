@@ -24,6 +24,7 @@ export class OrderEntity {
   paidAt?: Date;
   isDelivered!: boolean;
   deliveredAt?: Date;
+  isCancelled?: boolean;
   createdAt?: Date;
   _id?: string; // For compatibility with MongoDB documents
 }

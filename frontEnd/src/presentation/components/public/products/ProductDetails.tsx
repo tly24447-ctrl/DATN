@@ -140,7 +140,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
                     <BookOpen size={80} />
                   </div>
                 )}
-                {hasDiscount && (
+                {product.price != discountedPrice && (
                   <div className="absolute top-6 left-6 bg-orange-500 text-white font-black px-4 py-2 rounded-lg shadow-lg">
                     {t.details.save} {product.discount}%
                   </div>

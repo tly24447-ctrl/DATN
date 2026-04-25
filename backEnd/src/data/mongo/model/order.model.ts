@@ -65,6 +65,9 @@ export class OrderDocument extends Document implements Omit<OrderEntity, 'id'> {
   @Prop({ default: false })
   isDelivered!: boolean;
 
+  @Prop({ default: false })
+  isCancelled!: boolean;
+
   @Prop()
   deliveredAt?: Date;
 

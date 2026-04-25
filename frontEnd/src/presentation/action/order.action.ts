@@ -26,7 +26,7 @@ export async function createOrderAction(formData: CreateOrderDto) {
     order.shippingPrice = formData.shippingPrice;
     order.totalPrice = formData.totalPrice;
     order.isCart = false;
-    order.isPaid = formData.paymentMethod === 'COD' ? false : true;
+    order.isPaid = false;
     order.isDelivered = false;
     order.createdAt = new Date();
 

@@ -19,6 +19,14 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 
 const OrderStatusBadge = ({ order }: { order: OrderEntity }) => {
+  if (order.isCancelled) {
+    return (
+      <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border bg-red-50 text-red-700 border-red-100">
+        <X size={14} /> Cancelled
+      </span>
+    );
+  }
+
   if (order.isDelivered) {
     return (
       <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border bg-emerald-50 text-emerald-700 border-emerald-100">
@@ -26,6 +34,7 @@ const OrderStatusBadge = ({ order }: { order: OrderEntity }) => {
       </span>
     );
   }
+
   return (
     <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border bg-amber-50 text-amber-700 border-amber-100">
       <Clock size={14} /> {order.isPaid ? 'Processing' : 'Pending Payment'}
@@ -135,6 +144,7 @@ export default function Page() {
               <div key={order._id} className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 {/* ... (Phần nội dung hiển thị Order Item giữ nguyên như cũ) */}
                 <div className="p-6">
+                  {/* todo update view for status isCancelled and isDelivered */}
                   {/* Header: ID and Status */}
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-50">
                     <div className="flex items-center gap-4">

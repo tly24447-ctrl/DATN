@@ -67,11 +67,15 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, onViewDetails }) => {
                   </div>
                   <div className="text-[10px] text-slate-400">Method: {order.paymentMethod}</div>
                 </td>
-
                 {/* Payment Status & VNPay Transaction ID */}
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex flex-col gap-1">
-                    {order.isPaid ? (
+                    {order.isCancelled ? (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-100 text-red-700 w-fit">
+                        <span className="h-1 w-1 rounded-full bg-red-600"></span>
+                        Cancelled
+                      </span>
+                    ) : order.isPaid ? (
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-green-100 text-green-700 w-fit">
                         <span className="h-1 w-1 rounded-full bg-green-600"></span>
                         Paid
@@ -82,15 +86,15 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, onViewDetails }) => {
                         Pending
                       </span>
                     )}
-                    
+
                     {/* Hiển thị VNPay ID nếu có */}
                     {order.vnPayId && (
                       <div className="text-[9px] text-slate-400 font-mono mt-0.5 flex items-center gap-1">
                         <span className="text-slate-300">TXN:</span> {order.vnPayId}
                       </div>
                     )}
-                    
-                    {order.paidAt && (
+
+                    {order.paidAt && !order.isCancelled && (
                       <div className="text-[10px] text-slate-400">
                         {new Date(order.paidAt).toLocaleString()}
                       </div>
@@ -100,7 +104,12 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, onViewDetails }) => {
 
                 {/* Delivery Status */}
                 <td className="px-6 py-4 whitespace-nowrap">
-                  {order.isDelivered ? (
+                  {order.isCancelled ? (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-100 text-red-700">
+                      <Package size={12} />
+                      Cancelled
+                    </span>
+                  ) : order.isDelivered ? (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">
                       <Truck size={12} />
                       Delivered

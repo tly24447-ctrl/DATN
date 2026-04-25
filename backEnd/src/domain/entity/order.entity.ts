@@ -23,6 +23,7 @@ export class OrderEntity {
   isPaid!: boolean;
   paidAt?: Date;
   isDelivered!: boolean;
+  isCancelled?: boolean;
   deliveredAt?: Date;
   createdAt?: Date;
 }

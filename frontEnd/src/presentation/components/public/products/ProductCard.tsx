@@ -99,7 +99,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         {/* Price and Action */}
         <div className="flex items-center justify-between pt-2">
           <div className="flex flex-col">
-            {hasDiscount && (
+            {product.price != discountedPrice && (
               <span className="text-[10px] text-slate-400 line-through">
                 {formatPrice(product.price)}
               </span>
