@@ -172,7 +172,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
 
             <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100 flex flex-wrap items-end gap-6">
               <div>
-                {hasDiscount && (
+                {product.price != discountedPrice && (
                   <span className="text-lg text-slate-400 line-through font-medium block">
                     {formatPrice(product.price)}
                   </span>
